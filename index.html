@@ -7,8 +7,6 @@
 
 <link rel="stylesheet" href="style.css">
 <script src="config.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -16,41 +14,59 @@
 <!-- LOGIN -->
 <div id="login" class="login">
   <div class="card">
-    <h2>Login</h2>
-    <input id="user" placeholder="Usuario">
-    <input id="pass" type="password" placeholder="Contraseña">
+    <h2>🔐 Iniciar Sesión</h2>
+
+    <input id="user" placeholder="👤 Usuario">
+    <input id="pass" type="password" placeholder="🔒 Contraseña">
+
     <button onclick="login()">Ingresar</button>
   </div>
 </div>
 
 <!-- ADMIN -->
 <div id="panelAdmin" class="layout hidden">
+
   <div class="sidebar">
-    <h3>ADMIN</h3>
+    <h3>👨‍💼 Panel Administrador</h3>
 
-    <button onclick="mostrarSeccion('tecnicos')">Técnicos</button>
-    <button onclick="mostrarSeccion('proyectos')">Proyectos</button>
-    <button onclick="mostrarSeccion('informes')">Informes</button>
+    <button onclick="mostrarSeccion('tecnicos')">👷 Técnicos</button>
+    <button onclick="mostrarSeccion('proyectos')">📁 Proyectos</button>
+    <button onclick="mostrarSeccion('informes')">📝 Informes</button>
 
-    <button onclick="logout()">Salir</button>
+    <button onclick="logout()">🚪 Salir</button>
   </div>
 
   <div class="main">
 
+    <!-- TECNICOS -->
     <div id="tecnicosSec" class="card hidden">
-      <input id="nuevoTecnico">
-      <button onclick="agregarTecnico()">Agregar</button>
-      <div id="listaTecnicos"></div>
+      <h3>👷 Gestión de Técnicos</h3>
+
+      <input id="nuevoTecnico" placeholder="Nombre del técnico">
+      <button onclick="agregarTecnico()">Agregar técnico</button>
+
+      <h4>Lista de técnicos:</h4>
+      <div id="listaTecnicos">No hay técnicos registrados</div>
     </div>
 
+    <!-- PROYECTOS -->
     <div id="proyectosSec" class="card hidden">
-      <input id="numeroProyecto">
-      <input id="nombreSitio">
-      <button onclick="agregarProyecto()">Agregar</button>
-      <div id="listaProyectos"></div>
+      <h3>📁 Gestión de Proyectos</h3>
+
+      <input id="numeroProyecto" placeholder="Número del proyecto">
+      <input id="nombreSitio" placeholder="Nombre del sitio">
+
+      <button onclick="agregarProyecto()">Agregar proyecto</button>
+
+      <h4>Lista de proyectos:</h4>
+      <div id="listaProyectos">No hay proyectos registrados</div>
     </div>
 
-    <div id="informesSec" class="card hidden"></div>
+    <!-- INFORMES -->
+    <div id="informesSec" class="card hidden">
+      <h3>📝 Informes</h3>
+      <p>Aquí podrás ver y gestionar los informes creados.</p>
+    </div>
 
   </div>
 </div>
@@ -58,33 +74,46 @@
 <!-- TECNICO -->
 <div id="panelTecnico" class="hidden main">
 
+  <h2>👷 Panel Técnico</h2>
+
   <div class="card">
+
+    <label>Proyecto:</label>
     <select id="proyecto"></select>
 
-    <input id="sitio" readonly>
+    <label>Sitio:</label>
+    <input id="sitio" placeholder="Se completa automáticamente" readonly>
+
+    <label>Fecha:</label>
     <input type="date" id="fecha">
 
+    <label>Personal asignado:</label>
     <select id="personas" multiple></select>
 
-    <textarea id="descripcion"></textarea>
+    <label>Descripción del trabajo:</label>
+    <textarea id="descripcion" placeholder="Describe lo realizado..."></textarea>
 
+    <label>Fotos:</label>
     <input type="file" id="fotos" multiple>
 
-    <button onclick="guardarInforme()">Guardar en la nube</button>
+    <button onclick="guardarInforme()">Guardar informe</button>
   </div>
 
-  <div id="listaInformes"></div>
+  <h3>📋 Informes registrados</h3>
+  <div id="listaInformes">No hay informes aún</div>
 
-  <button onclick="logout()">Salir</button>
+  <button onclick="logout()">🚪 Salir</button>
 </div>
 
 <!-- MODAL -->
 <div id="modalEditar" class="modal hidden">
   <div class="modal-content">
-    <input type="date" id="editFecha">
-    <textarea id="editDescripcion"></textarea>
+    <h3>✏️ Editar Informe</h3>
 
-    <button onclick="guardarEdicion()">Guardar</button>
+    <input type="date" id="editFecha">
+    <textarea id="editDescripcion" placeholder="Editar descripción"></textarea>
+
+    <button onclick="guardarEdicion()">Guardar cambios</button>
     <button onclick="cerrarModal()">Cerrar</button>
   </div>
 </div>
