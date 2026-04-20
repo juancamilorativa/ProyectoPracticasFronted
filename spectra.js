@@ -1,4 +1,3 @@
-const API_URL = "https://proyectopracticas1.onrender.com";
 
 let token = null;
 
