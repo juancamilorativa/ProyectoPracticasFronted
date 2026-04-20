@@ -1,11 +1,11 @@
 let token = null;
 
 /* =========================
-   LOGIN SAAS (JWT)
+   LOGIN
 ========================= */
 function login() {
 
- fetch("https://TU-BACKEND.onrender.com/login", {
+ fetch(`${API_URL}/login`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -34,19 +34,20 @@ function login() {
   }
 
  });
+
 }
 
 /* =========================
-   HEADERS SAAS
+   HEADERS AUTH
 ========================= */
 function authHeader(){
- return {
+ return token ? {
   "Authorization": "Bearer " + token
- };
+ } : {};
 }
 
 /* =========================
-   ADMIN SECCIONES
+   SECCIONES ADMIN
 ========================= */
 function mostrarSeccion(s){
 
@@ -72,10 +73,10 @@ function mostrarSeccion(s){
 }
 
 /* =========================
-   TECNICOS SAAS
+   TECNICOS
 ========================= */
 function mostrarTecnicos(){
- fetch("https://TU-BACKEND.onrender.com/tecnicos", {
+ fetch(`${API_URL}/tecnicos`, {
   headers: authHeader()
  })
  .then(r => r.json())
@@ -92,7 +93,7 @@ function mostrarTecnicos(){
 }
 
 function agregarTecnico(){
- fetch("https://TU-BACKEND.onrender.com/tecnicos", {
+ fetch(`${API_URL}/tecnicos`, {
   method: "POST",
   headers: {
    "Content-Type": "application/json",
@@ -105,24 +106,23 @@ function agregarTecnico(){
 }
 
 /* =========================
-   PROYECTOS SAAS
+   PROYECTOS
 ========================= */
 function mostrarProyectos(){
- fetch("https://TU-BACKEND.onrender.com/proyectos", {
+ fetch(`${API_URL}/proyectos`, {
   headers: authHeader()
  })
  .then(r => r.json())
  .then(d => {
   listaProyectos.innerHTML = "";
   d.forEach(p => {
-   listaProyectos.innerHTML += `
-   <div>${p.numero} - ${p.sitio}</div>`;
+   listaProyectos.innerHTML += `<div>${p.numero} - ${p.sitio}</div>`;
   });
  });
 }
 
 function agregarProyecto(){
- fetch("https://TU-BACKEND.onrender.com/proyectos", {
+ fetch(`${API_URL}/proyectos`, {
   method: "POST",
   headers: {
    "Content-Type": "application/json",
@@ -139,7 +139,7 @@ function agregarProyecto(){
    CARGAS TECNICO
 ========================= */
 function cargarProyectos(){
- fetch("https://TU-BACKEND.onrender.com/proyectos", {
+ fetch(`${API_URL}/proyectos`, {
   headers: authHeader()
  })
  .then(r => r.json())
@@ -152,7 +152,7 @@ function cargarProyectos(){
 }
 
 function cargarTecnicos(){
- fetch("https://TU-BACKEND.onrender.com/tecnicos", {
+ fetch(`${API_URL}/tecnicos`, {
   headers: authHeader()
  })
  .then(r => r.json())
@@ -165,7 +165,7 @@ function cargarTecnicos(){
 }
 
 /* =========================
-   INFORMES SAAS (UPLOAD REAL)
+   INFORMES
 ========================= */
 function guardarInforme(){
 
@@ -181,7 +181,7 @@ function guardarInforme(){
   fd.append("fotos", f);
  }
 
- fetch("https://TU-BACKEND.onrender.com/informes", {
+ fetch(`${API_URL}/informes`, {
   method: "POST",
   headers: {
    "Authorization": "Bearer " + token
@@ -195,7 +195,7 @@ function guardarInforme(){
    LISTAR INFORMES
 ========================= */
 function mostrarInformes(){
- fetch("https://TU-BACKEND.onrender.com/informes", {
+ fetch(`${API_URL}/informes`, {
   headers: authHeader()
  })
  .then(r => r.json())
@@ -203,15 +203,13 @@ function mostrarInformes(){
   listaInformes.innerHTML = "";
   d.forEach(i => {
    listaInformes.innerHTML += `
-   <div>
-    ${i.sitio} - ${i.fecha}
-   </div>`;
+   <div>${i.sitio} - ${i.fecha}</div>`;
   });
  });
 }
 
 function mostrarInformesAdmin(){
- fetch("https://TU-BACKEND.onrender.com/informes", {
+ fetch(`${API_URL}/informes`, {
   headers: authHeader()
  })
  .then(r => r.json())
@@ -231,7 +229,7 @@ function mostrarInformesAdmin(){
    DELETE
 ========================= */
 function eliminarInforme(id){
- fetch("https://TU-BACKEND.onrender.com/informes/" + id, {
+ fetch(`${API_URL}/informes/${id}`, {
   method: "DELETE",
   headers: authHeader()
  }).then(mostrarInformesAdmin);
@@ -239,6 +237,6 @@ function eliminarInforme(id){
 
 /* LOGOUT */
 function logout(){
- localStorage.removeItem("token");
+ token = null;
  location.reload();
 }
