@@ -1,4 +1,13 @@
 let token = null;
+/* =========================
+   ELEMENTOS
+========================= */
+const loginDiv = document.getElementById("login");
+const panelAdmin = document.getElementById("panelAdmin");
+const panelTecnico = document.getElementById("panelTecnico");
+
+const user = document.getElementById("user");
+const pass = document.getElementById("pass");
 
 /* =========================
    LOGIN
