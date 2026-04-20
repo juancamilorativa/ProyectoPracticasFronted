@@ -1,10 +1,21 @@
+const API_URL = "https://proyectopracticas1.onrender.com";
+
 let token = localStorage.getItem("token");
 
 /* =========================
    MENSAJES
 ========================= */
-function mostrarMensaje(msg, tipo = "ok") {
- alert((tipo === "error" ? "❌ " : "✅ ") + msg);
+function msg(texto, error = false) {
+ alert((error ? "❌ " : "✅ ") + texto);
+}
+
+/* =========================
+   AUTH
+========================= */
+function auth() {
+ return {
+  "Authorization": "Bearer " + localStorage.getItem("token")
+ };
 }
 
 /* =========================
@@ -17,7 +28,6 @@ const panelTecnico = document.getElementById("panelTecnico");
 const user = document.getElementById("user");
 const pass = document.getElementById("pass");
 
-// ADMIN
 const tecnicosSec = document.getElementById("tecnicosSec");
 const proyectosSec = document.getElementById("proyectosSec");
 const informesSec = document.getElementById("informesSec");
@@ -29,11 +39,9 @@ const numeroProyecto = document.getElementById("numeroProyecto");
 const nombreSitio = document.getElementById("nombreSitio");
 const listaProyectos = document.getElementById("listaProyectos");
 
-// TECNICO
 const proyecto = document.getElementById("proyecto");
 const sitio = document.getElementById("sitio");
 const fecha = document.getElementById("fecha");
-const personas = document.getElementById("personas");
 const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const listaInformes = document.getElementById("listaInformes");
@@ -43,33 +51,25 @@ const listaInformes = document.getElementById("listaInformes");
 ========================= */
 function login() {
 
- if (!user.value || !pass.value) {
-  return mostrarMensaje("Completa usuario y contraseña", "error");
- }
+ if (!user.value || !pass.value)
+  return msg("Completa usuario y contraseña", true);
 
  fetch(`${API_URL}/login`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-   user: user.value,
-   pass: pass.value
-  })
+  body: JSON.stringify({ user: user.value, pass: pass.value })
  })
- .then(r => {
-  if (!r.ok) throw new Error();
-  return r.json();
+ .then(async r => {
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+  return d.data;
  })
- .then(data => {
-
-  token = data.token;
-
-  localStorage.setItem("token", token);
-  localStorage.setItem("role", data.role);
-
-  iniciarApp(data.role);
-
+ .then(d => {
+  localStorage.setItem("token", d.token);
+  localStorage.setItem("role", d.role);
+  iniciarApp(d.role);
  })
- .catch(() => mostrarMensaje("Credenciales incorrectas", "error"));
+ .catch(e => msg(e.message, true));
 }
 
 /* =========================
@@ -85,6 +85,7 @@ function iniciarApp(role) {
   mostrarProyectos();
  } else {
   panelTecnico.classList.remove("hidden");
+  cargarProyectosSelect();
   mostrarInformes();
  }
 }
@@ -94,19 +95,8 @@ function iniciarApp(role) {
 ========================= */
 window.onload = () => {
  const role = localStorage.getItem("role");
- if (token && role) {
-  iniciarApp(role);
- }
+ if (token && role) iniciarApp(role);
 };
-
-/* =========================
-   AUTH HEADER
-========================= */
-function authHeader() {
- return {
-  "Authorization": "Bearer " + token
- };
-}
 
 /* =========================
    SECCIONES
@@ -127,43 +117,33 @@ function mostrarSeccion(sec) {
 ========================= */
 function agregarTecnico() {
 
- if (!nuevoTecnico.value.trim()) {
-  return mostrarMensaje("Ingresa el nombre del técnico", "error");
- }
+ if (!nuevoTecnico.value.trim())
+  return msg("Nombre requerido", true);
 
  fetch(`${API_URL}/tecnicos`, {
   method: "POST",
-  headers: {
-   "Content-Type": "application/json",
-   ...authHeader()
-  },
-  body: JSON.stringify({
-   nombre: nuevoTecnico.value
-  })
+  headers: { "Content-Type": "application/json", ...auth() },
+  body: JSON.stringify({ nombre: nuevoTecnico.value })
  })
- .then(r => r.json())
+ .then(async r => {
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+ })
  .then(() => {
-  mostrarMensaje("Técnico agregado");
+  msg("Técnico agregado");
   nuevoTecnico.value = "";
   mostrarTecnicos();
- });
-
+ })
+ .catch(e => msg(e.message, true));
 }
 
 function mostrarTecnicos() {
- fetch(`${API_URL}/tecnicos`, {
-  headers: authHeader()
- })
+ fetch(`${API_URL}/tecnicos`, { headers: auth() })
  .then(r => r.json())
- .then(data => {
+ .then(d => {
   listaTecnicos.innerHTML = "";
-
-  if (data.length === 0) {
-   listaTecnicos.innerHTML = "No hay técnicos registrados";
-   return;
-  }
-
-  data.forEach(t => {
+  if (!d.data.length) return listaTecnicos.innerHTML = "Sin técnicos";
+  d.data.forEach(t => {
    listaTecnicos.innerHTML += `<div>${t.nombre}</div>`;
   });
  });
@@ -174,46 +154,50 @@ function mostrarTecnicos() {
 ========================= */
 function agregarProyecto() {
 
- if (!numeroProyecto.value.trim() || !nombreSitio.value.trim()) {
-  return mostrarMensaje("Completa todos los campos del proyecto", "error");
- }
+ if (!numeroProyecto.value || !nombreSitio.value)
+  return msg("Completa campos", true);
 
  fetch(`${API_URL}/proyectos`, {
   method: "POST",
-  headers: {
-   "Content-Type": "application/json",
-   ...authHeader()
-  },
+  headers: { "Content-Type": "application/json", ...auth() },
   body: JSON.stringify({
    numero: numeroProyecto.value,
    sitio: nombreSitio.value
   })
  })
- .then(r => r.json())
+ .then(async r => {
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+ })
  .then(() => {
-  mostrarMensaje("Proyecto agregado");
-  numeroProyecto.value = "";
-  nombreSitio.value = "";
+  msg("Proyecto agregado");
   mostrarProyectos();
- });
-
+ })
+ .catch(e => msg(e.message, true));
 }
 
 function mostrarProyectos() {
- fetch(`${API_URL}/proyectos`, {
-  headers: authHeader()
- })
+ fetch(`${API_URL}/proyectos`, { headers: auth() })
  .then(r => r.json())
- .then(data => {
+ .then(d => {
   listaProyectos.innerHTML = "";
-
-  if (data.length === 0) {
-   listaProyectos.innerHTML = "No hay proyectos registrados";
-   return;
-  }
-
-  data.forEach(p => {
+  if (!d.data.length) return listaProyectos.innerHTML = "Sin proyectos";
+  d.data.forEach(p => {
    listaProyectos.innerHTML += `<div>${p.numero} - ${p.sitio}</div>`;
+  });
+ });
+}
+
+/* =========================
+   SELECT PROYECTOS
+========================= */
+function cargarProyectosSelect() {
+ fetch(`${API_URL}/proyectos`, { headers: auth() })
+ .then(r => r.json())
+ .then(d => {
+  proyecto.innerHTML = "";
+  d.data.forEach(p => {
+   proyecto.innerHTML += `<option value="${p.numero}">${p.numero}</option>`;
   });
  });
 }
@@ -223,21 +207,8 @@ function mostrarProyectos() {
 ========================= */
 function guardarInforme() {
 
- if (!proyecto.value) {
-  return mostrarMensaje("Selecciona un proyecto", "error");
- }
-
- if (!fecha.value) {
-  return mostrarMensaje("Selecciona una fecha", "error");
- }
-
- if (!descripcion.value.trim()) {
-  return mostrarMensaje("Escribe una descripción", "error");
- }
-
- if (fotos.files.length === 0) {
-  return mostrarMensaje("Debes subir al menos una foto", "error");
- }
+ if (!proyecto.value || !fecha.value || !descripcion.value)
+  return msg("Campos incompletos", true);
 
  let fd = new FormData();
 
@@ -252,33 +223,27 @@ function guardarInforme() {
 
  fetch(`${API_URL}/informes`, {
   method: "POST",
-  headers: {
-   "Authorization": "Bearer " + token
-  },
+  headers: auth(),
   body: fd
  })
- .then(r => r.json())
+ .then(async r => {
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.error);
+ })
  .then(() => {
-  mostrarMensaje("Informe guardado correctamente");
+  msg("Informe guardado");
   mostrarInformes();
- });
-
+ })
+ .catch(e => msg(e.message, true));
 }
 
 function mostrarInformes() {
- fetch(`${API_URL}/informes`, {
-  headers: authHeader()
- })
+ fetch(`${API_URL}/informes`, { headers: auth() })
  .then(r => r.json())
- .then(data => {
+ .then(d => {
   listaInformes.innerHTML = "";
-
-  if (data.length === 0) {
-   listaInformes.innerHTML = "No hay informes aún";
-   return;
-  }
-
-  data.forEach(i => {
+  if (!d.data.length) return listaInformes.innerHTML = "Sin informes";
+  d.data.forEach(i => {
    listaInformes.innerHTML += `<div>${i.sitio} - ${i.fecha}</div>`;
   });
  });
