@@ -1,4 +1,7 @@
+const API_URL = "https://proyectopracticas1.onrender.com";
+
 let token = null;
+
 /* =========================
    ELEMENTOS
 ========================= */
@@ -34,13 +37,12 @@ function login() {
 
   if (data.role === "admin") {
    panelAdmin.classList.remove("hidden");
-   mostrarSeccion("tecnicos");
   } else {
    panelTecnico.classList.remove("hidden");
-   cargarProyectos();
-   cargarTecnicos();
-   mostrarInformes();
   }
+
+  localStorage.setItem("token", token);
+  localStorage.setItem("role", data.role);
 
  });
 
@@ -49,59 +51,31 @@ function login() {
 /* =========================
    HEADERS AUTH
 ========================= */
-function authHeader(){
- return token ? {
+function authHeader() {
+ return {
   "Authorization": "Bearer " + token
- } : {};
+ };
 }
 
 /* =========================
-   SECCIONES ADMIN
+   SECCIONES
 ========================= */
-function mostrarSeccion(s){
+function mostrarSeccion(sec) {
 
  tecnicosSec.classList.add("hidden");
  proyectosSec.classList.add("hidden");
  informesSec.classList.add("hidden");
 
- if (s === "tecnicos") {
-  tecnicosSec.classList.remove("hidden");
-  mostrarTecnicos();
- }
-
- if (s === "proyectos") {
-  proyectosSec.classList.remove("hidden");
-  mostrarProyectos();
- }
-
- if (s === "informes") {
-  informesSec.classList.remove("hidden");
-  mostrarInformesAdmin();
- }
-
+ if (sec === "tecnicos") tecnicosSec.classList.remove("hidden");
+ if (sec === "proyectos") proyectosSec.classList.remove("hidden");
+ if (sec === "informes") informesSec.classList.remove("hidden");
 }
 
 /* =========================
    TECNICOS
 ========================= */
-function mostrarTecnicos(){
- fetch(`${API_URL}/tecnicos`, {
-  headers: authHeader()
- })
- .then(r => r.json())
- .then(d => {
-  listaTecnicos.innerHTML = "";
-  d.forEach(t => {
-   listaTecnicos.innerHTML += `
-   <div>
-    ${t.nombre}
-    <button onclick="eliminarTecnico(${t.id})">X</button>
-   </div>`;
-  });
- });
-}
+function agregarTecnico() {
 
-function agregarTecnico(){
  fetch(`${API_URL}/tecnicos`, {
   method: "POST",
   headers: {
@@ -111,26 +85,29 @@ function agregarTecnico(){
   body: JSON.stringify({
    nombre: nuevoTecnico.value
   })
- }).then(mostrarTecnicos);
+ })
+ .then(() => mostrarTecnicos());
+
+}
+
+function mostrarTecnicos() {
+ fetch(`${API_URL}/tecnicos`, {
+  headers: authHeader()
+ })
+ .then(r => r.json())
+ .then(data => {
+  listaTecnicos.innerHTML = "";
+  data.forEach(t => {
+   listaTecnicos.innerHTML += `<div>${t.nombre}</div>`;
+  });
+ });
 }
 
 /* =========================
    PROYECTOS
 ========================= */
-function mostrarProyectos(){
- fetch(`${API_URL}/proyectos`, {
-  headers: authHeader()
- })
- .then(r => r.json())
- .then(d => {
-  listaProyectos.innerHTML = "";
-  d.forEach(p => {
-   listaProyectos.innerHTML += `<div>${p.numero} - ${p.sitio}</div>`;
-  });
- });
-}
+function agregarProyecto() {
 
-function agregarProyecto(){
  fetch(`${API_URL}/proyectos`, {
   method: "POST",
   headers: {
@@ -141,34 +118,20 @@ function agregarProyecto(){
    numero: numeroProyecto.value,
    sitio: nombreSitio.value
   })
- }).then(mostrarProyectos);
+ })
+ .then(() => mostrarProyectos());
+
 }
 
-/* =========================
-   CARGAS TECNICO
-========================= */
-function cargarProyectos(){
+function mostrarProyectos() {
  fetch(`${API_URL}/proyectos`, {
   headers: authHeader()
  })
  .then(r => r.json())
- .then(d => {
-  proyecto.innerHTML = "";
-  d.forEach(p => {
-   proyecto.innerHTML += `<option>${p.numero}</option>`;
-  });
- });
-}
-
-function cargarTecnicos(){
- fetch(`${API_URL}/tecnicos`, {
-  headers: authHeader()
- })
- .then(r => r.json())
- .then(d => {
-  personas.innerHTML = "";
-  d.forEach(t => {
-   personas.innerHTML += `<option>${t.nombre}</option>`;
+ .then(data => {
+  listaProyectos.innerHTML = "";
+  data.forEach(p => {
+   listaProyectos.innerHTML += `<div>${p.numero} - ${p.sitio}</div>`;
   });
  });
 }
@@ -176,7 +139,7 @@ function cargarTecnicos(){
 /* =========================
    INFORMES
 ========================= */
-function guardarInforme(){
+function guardarInforme() {
 
  let fd = new FormData();
 
@@ -184,7 +147,6 @@ function guardarInforme(){
  fd.append("sitio", sitio.value);
  fd.append("fecha", fecha.value);
  fd.append("descripcion", descripcion.value);
- fd.append("personas", JSON.stringify([...personas.selectedOptions].map(o => o.value)));
 
  for (let f of fotos.files) {
   fd.append("fotos", f);
@@ -197,55 +159,27 @@ function guardarInforme(){
   },
   body: fd
  })
- .then(mostrarInformes);
+ .then(() => mostrarInformes());
+
 }
 
-/* =========================
-   LISTAR INFORMES
-========================= */
-function mostrarInformes(){
+function mostrarInformes() {
  fetch(`${API_URL}/informes`, {
   headers: authHeader()
  })
  .then(r => r.json())
- .then(d => {
+ .then(data => {
   listaInformes.innerHTML = "";
-  d.forEach(i => {
-   listaInformes.innerHTML += `
-   <div>${i.sitio} - ${i.fecha}</div>`;
-  });
- });
-}
-
-function mostrarInformesAdmin(){
- fetch(`${API_URL}/informes`, {
-  headers: authHeader()
- })
- .then(r => r.json())
- .then(d => {
-  informesSec.innerHTML = "";
-  d.forEach(i => {
-   informesSec.innerHTML += `
-   <div>
-    ${i.sitio}
-    <button onclick="eliminarInforme(${i.id})">X</button>
-   </div>`;
+  data.forEach(i => {
+   listaInformes.innerHTML += `<div>${i.sitio} - ${i.fecha}</div>`;
   });
  });
 }
 
 /* =========================
-   DELETE
+   LOGOUT
 ========================= */
-function eliminarInforme(id){
- fetch(`${API_URL}/informes/${id}`, {
-  method: "DELETE",
-  headers: authHeader()
- }).then(mostrarInformesAdmin);
-}
-
-/* LOGOUT */
-function logout(){
- token = null;
+function logout() {
+ localStorage.clear();
  location.reload();
 }
