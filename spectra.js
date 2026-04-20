@@ -1,5 +1,3 @@
-const API_URL = "https://proyectopracticas1.onrender.com";
-
 let token = localStorage.getItem("token");
 
 /* =========================
