@@ -418,20 +418,44 @@ async function descargarInforme(i){
  const { jsPDF } = window.jspdf;
  const doc = new jsPDF();
 
- doc.text("INFORME",20,20);
- doc.text(`Proyecto: ${i.proyecto}`,20,40);
- doc.text(`Sitio: ${i.sitio}`,20,50);
- doc.text(`Fecha: ${new Date(i.fecha).toLocaleString()}`,20,60);
+ let y = 20;
 
- doc.text("Descripción:",20,70);
- doc.text(i.descripcion || "",20,80);
+ // 🔥 FUNCIÓN PARA SALTO DE LÍNEA AUTOMÁTICO
+ function textoLargo(txt, x, yPos, maxWidth = 180){
+  const lineas = doc.splitTextToSize(txt || "", maxWidth);
+  doc.text(lineas, x, yPos);
+  return yPos + (lineas.length * 7);
+ }
 
- doc.text("Responsables:",20,100);
- doc.text(i.responsables || "N/A",20,110);
+ doc.setFontSize(16);
+ doc.text("INFORME", 20, y);
+ y += 10;
 
- let y = 120;
+ doc.setFontSize(11);
 
- // 🔥 FOTOS CON TAMAÑO REAL
+ y = textoLargo(`Proyecto: ${i.proyecto}`, 20, y);
+ y = textoLargo(`Sitio: ${i.sitio}`, 20, y);
+ y = textoLargo(`Fecha: ${new Date(i.fecha).toLocaleString()}`, 20, y);
+
+ // 🔥 RESPONSABLES 
+ y += 5;
+ doc.setFont(undefined, "bold");
+ doc.text("Responsables:", 20, y);
+ doc.setFont(undefined, "normal");
+
+ y += 7;
+ y = textoLargo(i.responsables || "N/A", 20, y);
+
+ // 🔥 DESCRIPCIÓN
+ y += 5;
+ doc.setFont(undefined, "bold");
+ doc.text("Descripción:", 20, y);
+ doc.setFont(undefined, "normal");
+
+ y += 7;
+ y = textoLargo(i.descripcion || "", 20, y);
+
+ // 🔥 IMÁGENES
  if(i.fotos){
 
   const lista = i.fotos.split(",");
@@ -450,7 +474,6 @@ async function descargarInforme(i){
       reader.readAsDataURL(blob);
     });
 
-    // 🔥 CREAR IMAGEN PARA SABER TAMAÑO REAL
     const img = new Image();
     img.src = base64;
 
@@ -459,14 +482,13 @@ async function descargarInforme(i){
     let imgWidth = img.width;
     let imgHeight = img.height;
 
-    // 🔥 AJUSTE AL PDF (SIN DEFORMAR)
-    const maxWidth = 180; // ancho máximo hoja
+    const maxWidth = 180;
     const ratio = maxWidth / imgWidth;
 
     imgWidth = maxWidth;
     imgHeight = imgHeight * ratio;
 
-    // 🔥 SALTO DE PÁGINA SI SE SALE
+    // 🔥 SALTO DE PÁGINA
     if(y + imgHeight > 280){
      doc.addPage();
      y = 20;
