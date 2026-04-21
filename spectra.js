@@ -385,7 +385,6 @@ function guardarEdicion(){
   headers:{
    "Content-Type":"application/json",
    ...authHeader()
-   
   },
   body:JSON.stringify({
    fecha:editFecha.value,
@@ -393,11 +392,21 @@ function guardarEdicion(){
   })
  })
  .then(()=>{
-  modalEditar.classList.add("hidden");
+  cerrarModal();
   mostrarInformes();
  });
 }
 
+function cerrarModal(){
+ modalEditar.classList.add("hidden");
+ editId=null;
+ editFecha.value="";
+ editDescripcion.value="";
+}
+
+window.addEventListener("click",(e)=>{
+ if(e.target===modalEditar) cerrarModal();
+});
 /* =========================
    ELIMINAR
 ========================= */
