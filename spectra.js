@@ -169,7 +169,7 @@ function mostrarTecnicos(){
    listaTecnicos.innerHTML+=`
    <div>
     ${t.nombre}
-    <button onclick="eliminarTecnico(${t.id})">🗑</button>
+    <button onclick="eliminarTecnico(${t.id})">Eliminar</button>
    </div>`;
   });
  });
@@ -223,7 +223,7 @@ function mostrarProyectos(){
    listaProyectos.innerHTML+=`
    <div>
     ${p.numero} - ${p.sitio}
-    <button onclick="eliminarProyecto(${p.id})">🗑</button>
+    <button onclick="eliminarProyecto(${p.id})">Eliminar</button>
    </div>`;
   });
  });
