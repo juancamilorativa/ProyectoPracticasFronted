@@ -429,16 +429,16 @@ async function descargarInforme(i){
  doc.text("Responsables:",20,100);
  doc.text(i.responsables || "N/A",20,110);
 
- // 🔥 SI HAY FOTOS
+ let y = 120;
+
+ // 🔥 FOTOS CON TAMAÑO REAL
  if(i.fotos){
 
   const lista = i.fotos.split(",");
-  let y = 120;
 
   for(let f of lista){
 
    try{
-
     const url = `${API_URL}/uploads/${f}`;
 
     const res = await fetch(url);
@@ -450,11 +450,34 @@ async function descargarInforme(i){
       reader.readAsDataURL(blob);
     });
 
-    doc.addImage(base64, "JPEG", 20, y, 60, 40);
-    y += 50;
+    // 🔥 CREAR IMAGEN PARA SABER TAMAÑO REAL
+    const img = new Image();
+    img.src = base64;
+
+    await new Promise(resolve => img.onload = resolve);
+
+    let imgWidth = img.width;
+    let imgHeight = img.height;
+
+    // 🔥 AJUSTE AL PDF (SIN DEFORMAR)
+    const maxWidth = 180; // ancho máximo hoja
+    const ratio = maxWidth / imgWidth;
+
+    imgWidth = maxWidth;
+    imgHeight = imgHeight * ratio;
+
+    // 🔥 SALTO DE PÁGINA SI SE SALE
+    if(y + imgHeight > 280){
+     doc.addPage();
+     y = 20;
+    }
+
+    doc.addImage(base64, "JPEG", 15, y, imgWidth, imgHeight);
+
+    y += imgHeight + 10;
 
    }catch(e){
-    console.log("Error cargando imagen:", e);
+    console.log("Error imagen:", e);
    }
   }
  }
