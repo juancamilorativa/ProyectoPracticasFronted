@@ -25,7 +25,6 @@ const listaProyectos = document.getElementById("listaProyectos");
 
 const proyecto = document.getElementById("proyecto");
 const sitio = document.getElementById("sitio");
-const fecha = document.getElementById("fecha"); // opcional
 const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
@@ -42,8 +41,8 @@ const editDescripcion = document.getElementById("editDescripcion");
 /* =========================
    MENSAJES
 ========================= */
-function msg(t, error=false){
- alert((error ? "❌ " : "✅ ") + t);
+function msg(texto, error=false){
+ alert((error ? "❌ " : "✅ ") + texto);
 }
 
 /* =========================
@@ -345,7 +344,7 @@ function renderInformes(data){
    ${new Date(i.fecha).toLocaleString("es-CO")}<br>
    ${i.descripcion}<br>
 
-   <b>Responsables:</b> ${i.responsables || "N/A"}<br>
+   <b>Responsables:</b> ${i.responsables || "Sin asignar"}<br>
 
    ${botones}
 
