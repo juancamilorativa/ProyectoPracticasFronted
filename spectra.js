@@ -119,9 +119,18 @@ function mostrarSeccion(sec){
  proyectosSec.classList.add("hidden");
  informesSec.classList.add("hidden");
 
- if(sec==="tecnicos") tecnicosSec.classList.remove("hidden");
- if(sec==="proyectos") proyectosSec.classList.remove("hidden");
- if(sec==="informes") informesSec.classList.remove("hidden");
+ if(sec==="tecnicos"){
+  tecnicosSec.classList.remove("hidden");
+ }
+
+ if(sec==="proyectos"){
+  proyectosSec.classList.remove("hidden");
+ }
+
+ if(sec==="informes"){
+  informesSec.classList.remove("hidden");
+  mostrarInformes();
+ }
 }
 
 /* =========================
