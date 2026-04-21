@@ -25,7 +25,7 @@ const listaProyectos = document.getElementById("listaProyectos");
 
 const proyecto = document.getElementById("proyecto");
 const sitio = document.getElementById("sitio");
-const fecha = document.getElementById("fecha");
+const fecha = document.getElementById("fecha"); // opcional
 const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
@@ -42,8 +42,8 @@ const editDescripcion = document.getElementById("editDescripcion");
 /* =========================
    MENSAJES
 ========================= */
-function msg(t, e=false){
- alert((e?"❌ ":"✅ ")+t);
+function msg(t, error=false){
+ alert((error ? "❌ " : "✅ ") + t);
 }
 
 /* =========================
@@ -51,7 +51,7 @@ function msg(t, e=false){
 ========================= */
 function authHeader(){
  return {
-  "Authorization":"Bearer "+localStorage.getItem("token")
+  "Authorization": "Bearer " + localStorage.getItem("token")
  };
 }
 
@@ -71,17 +71,16 @@ function login(){
    pass:pass.value
   })
  })
- .then(async r=>{
-  const d = await r.json();
-  if(!d.ok) throw new Error(d.error);
-  return d.data;
+ .then(r=>r.json())
+ .then(d=>{
+  if(!d.ok) return msg(d.error,true);
+
+  localStorage.setItem("token", d.data.token);
+  localStorage.setItem("role", d.data.role);
+
+  iniciarApp(d.data.role);
  })
- .then(data=>{
-  localStorage.setItem("token",data.token);
-  localStorage.setItem("role",data.role);
-  iniciarApp(data.role);
- })
- .catch(e=>msg(e.message,true));
+ .catch(()=>msg("Error conexión",true));
 }
 
 /* =========================
@@ -93,11 +92,13 @@ function iniciarApp(role){
 
  if(role==="admin"){
   panelAdmin.classList.remove("hidden");
+
   mostrarTecnicos();
   mostrarProyectos();
   mostrarInformes();
  }else{
   panelTecnico.classList.remove("hidden");
+
   cargarProyectosSelect();
   cargarTecnicosSelect();
   mostrarInformes();
@@ -151,14 +152,12 @@ function agregarTecnico(){
 }
 
 function mostrarTecnicos(){
- fetch(`${API_URL}/tecnicos`,{
-  headers:authHeader()
- })
+ fetch(`${API_URL}/tecnicos`,{headers:authHeader()})
  .then(r=>r.json())
  .then(d=>{
   listaTecnicos.innerHTML="";
 
-  (d.data || []).forEach(t=>{
+  (d.data||[]).forEach(t=>{
    listaTecnicos.innerHTML+=`
    <div>
     ${t.nombre}
@@ -200,19 +199,19 @@ function agregarProyecto(){
   if(!d.ok) return msg(d.error,true);
 
   msg("Proyecto agregado");
+  numeroProyecto.value="";
+  nombreSitio.value="";
   mostrarProyectos();
  });
 }
 
 function mostrarProyectos(){
- fetch(`${API_URL}/proyectos`,{
-  headers:authHeader()
- })
+ fetch(`${API_URL}/proyectos`,{headers:authHeader()})
  .then(r=>r.json())
  .then(d=>{
   listaProyectos.innerHTML="";
 
-  (d.data || []).forEach(p=>{
+  (d.data||[]).forEach(p=>{
    listaProyectos.innerHTML+=`
    <div>
     ${p.numero} - ${p.sitio}
@@ -270,7 +269,7 @@ function cargarTecnicosSelect(){
 ========================= */
 function guardarInforme(){
 
- if(!proyecto.value || !fecha.value || !descripcion.value)
+ if(!proyecto.value || !descripcion.value)
   return msg("Campos incompletos",true);
 
  let fd=new FormData();
@@ -279,7 +278,6 @@ function guardarInforme(){
 
  fd.append("proyecto",proyecto.value);
  fd.append("sitio",sitio.value);
- fd.append("fecha",fecha.value);
  fd.append("descripcion",descripcion.value);
  fd.append("personas",JSON.stringify(seleccionados));
 
@@ -296,9 +294,7 @@ function guardarInforme(){
 
   msg("Informe guardado");
 
-  // limpiar
   descripcion.value="";
-  fecha.value="";
   fotos.value="";
   personas.selectedIndex=-1;
 
@@ -307,14 +303,25 @@ function guardarInforme(){
 }
 
 /* =========================
-   RENDER INFORMES
+   MOSTRAR INFORMES
+========================= */
+function mostrarInformes(){
+ fetch(`${API_URL}/informes`,{headers:authHeader()})
+ .then(r=>r.json())
+ .then(d=>{
+  renderInformes(d.data || []);
+ });
+}
+
+/* =========================
+   RENDER
 ========================= */
 function renderInformes(data){
 
  listaInformes.innerHTML="";
  const role = localStorage.getItem("role");
 
- (data||[]).forEach(i=>{
+ data.forEach(i=>{
 
   const minutos = (new Date() - new Date(i.fecha)) / 60000;
 
@@ -333,40 +340,17 @@ function renderInformes(data){
 
   listaInformes.innerHTML+=`
   <div class="card">
-   <b>${i.proyecto}</b> - ${i.sitio}<br>
-   ${i.fecha}<br>
+   <b>${i.proyecto}</b><br>
+   ${i.sitio}<br>
+   ${new Date(i.fecha).toLocaleString("es-CO")}<br>
    ${i.descripcion}<br>
 
+   <b>Responsables:</b> ${i.responsables || "N/A"}<br>
+
    ${botones}
+
    <button onclick='descargarInforme(${JSON.stringify(i)})'>PDF</button>
   </div>`;
- });
-}
-
-function mostrarInformes(){
- fetch(`${API_URL}/informes`,{headers:authHeader()})
- .then(r=>r.json())
- .then(d=>renderInformes(d.data));
-}
-
-/* =========================
-   FILTROS
-========================= */
-function filtrarInformes(){
-
- fetch(`${API_URL}/informes`,{headers:authHeader()})
- .then(r=>r.json())
- .then(d=>{
-
-  let data = d.data || [];
-
-  if(filtroProyecto.value)
-   data = data.filter(i=>i.proyecto.includes(filtroProyecto.value));
-
-  if(filtroFecha.value)
-   data = data.filter(i=>i.fecha===filtroFecha.value);
-
-  renderInformes(data);
  });
 }
 
@@ -402,7 +386,6 @@ function guardarEdicion(){
    ELIMINAR
 ========================= */
 function eliminarInforme(id){
-
  if(!confirm("¿Eliminar?")) return;
 
  fetch(`${API_URL}/informes/${id}`,{
@@ -423,8 +406,13 @@ function descargarInforme(i){
  doc.text("INFORME",20,20);
  doc.text(`Proyecto: ${i.proyecto}`,20,40);
  doc.text(`Sitio: ${i.sitio}`,20,50);
- doc.text(`Fecha: ${i.fecha}`,20,60);
- doc.text(i.descripcion||"",20,80);
+ doc.text(`Fecha: ${new Date(i.fecha).toLocaleString()}`,20,60);
+
+ doc.text("Descripción:",20,70);
+ doc.text(i.descripcion || "",20,80);
+
+ doc.text("Responsables:",20,100);
+ doc.text(i.responsables || "N/A",20,110);
 
  doc.save("informe_"+i.id+".pdf");
 }
