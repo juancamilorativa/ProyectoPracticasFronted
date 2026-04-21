@@ -1,4 +1,5 @@
 
+
 let token = localStorage.getItem("token");
 let editId = null;
 
@@ -99,10 +100,11 @@ function iniciarApp(role){
 
   cargarProyectosSelect();
   cargarTecnicosSelect();
-  mostrarInformes();
+  mostrarInformes(); // 🔥 CLAVE
  }
 }
 
+/* AUTO LOGIN */
 window.onload = ()=>{
  const role = localStorage.getItem("role");
  if(token && role) iniciarApp(role);
@@ -117,12 +119,17 @@ function mostrarSeccion(sec){
  proyectosSec.classList.add("hidden");
  informesSec.classList.add("hidden");
 
- if(sec==="tecnicos") tecnicosSec.classList.remove("hidden");
- if(sec==="proyectos") proyectosSec.classList.remove("hidden");
+ if(sec==="tecnicos"){
+  tecnicosSec.classList.remove("hidden");
+ }
+
+ if(sec==="proyectos"){
+  proyectosSec.classList.remove("hidden");
+ }
 
  if(sec==="informes"){
   informesSec.classList.remove("hidden");
-  mostrarInformes();
+  mostrarInformes(); // refrescar
  }
 }
 
@@ -162,7 +169,7 @@ function mostrarTecnicos(){
    listaTecnicos.innerHTML+=`
    <div>
     ${t.nombre}
-    <button onclick="eliminarTecnico(${t.id})">🗑</button>
+    <button onclick="eliminarTecnico(${t.id})">Eliminar</button>
    </div>`;
   });
  });
@@ -216,7 +223,7 @@ function mostrarProyectos(){
    listaProyectos.innerHTML+=`
    <div>
     ${p.numero} - ${p.sitio}
-    <button onclick="eliminarProyecto(${p.id})">🗑</button>
+    <button onclick="eliminarProyecto(${p.id})">Eliminar</button>
    </div>`;
   });
  });
@@ -237,23 +244,20 @@ function cargarProyectosSelect(){
  fetch(`${API_URL}/proyectos`,{headers:authHeader()})
  .then(r=>r.json())
  .then(d=>{
-
-  proyecto.innerHTML = "<option value=''>Seleccione proyecto</option>";
+  proyecto.innerHTML="";
 
   (d.data||[]).forEach(p=>{
-   const option = document.createElement("option");
-   option.value = p.numero;
-   option.textContent = p.numero;
-   option.dataset.sitio = p.sitio;
-   proyecto.appendChild(option);
+   proyecto.innerHTML+=`
+   <option value="${p.numero}" data-sitio="${p.sitio}">
+    ${p.numero}
+   </option>`;
   });
-
  });
 }
 
 proyecto.addEventListener("change",()=>{
- const selected = proyecto.selectedOptions[0];
- if(selected) sitio.value = selected.dataset.sitio || "";
+ const s = proyecto.options[proyecto.selectedIndex];
+ if(s) sitio.value = s.getAttribute("data-sitio");
 });
 
 function cargarTecnicosSelect(){
@@ -306,6 +310,9 @@ function guardarInforme(){
  });
 }
 
+/* =========================
+   MOSTRAR INFORMES
+========================= */
 function mostrarInformes(){
  fetch(`${API_URL}/informes`,{headers:authHeader()})
  .then(r=>r.json())
@@ -314,16 +321,37 @@ function mostrarInformes(){
  });
 }
 
+/* =========================
+   RENDER (CORREGIDO)
+========================= */
 function renderInformes(data){
 
  const role = localStorage.getItem("role");
- const contenedor = role==="admin" ? listaInformesAdmin : listaInformesTecnico;
+
+ const contenedor = role === "admin"
+  ? listaInformesAdmin
+  : listaInformesTecnico;
 
  if(!contenedor) return;
 
- contenedor.innerHTML="";
+ contenedor.innerHTML = "";
 
  data.forEach(i=>{
+
+  const minutos = (new Date() - new Date(i.fecha)) / 60000;
+
+  let botones="";
+
+  if(role==="admin"){
+   botones=`
+    <button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>
+    <button onclick='eliminarInforme(${i.id})'>Eliminar</button>
+   `;
+  }
+
+  if(role==="tecnico" && minutos<=15){
+   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>`;
+  }
 
   contenedor.innerHTML+=`
   <div class="card">
@@ -334,14 +362,15 @@ function renderInformes(data){
 
    <b>Responsables:</b> ${i.responsables || "Sin asignar"}<br>
 
-   <button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>
+   ${botones}
+
    <button onclick='descargarInforme(${JSON.stringify(i)})'>PDF</button>
   </div>`;
  });
 }
 
 /* =========================
-   MODAL
+   EDITAR
 ========================= */
 function editarInforme(i){
  editId=i.id;
@@ -356,6 +385,7 @@ function guardarEdicion(){
   headers:{
    "Content-Type":"application/json",
    ...authHeader()
+   
   },
   body:JSON.stringify({
    fecha:editFecha.value,
@@ -363,24 +393,26 @@ function guardarEdicion(){
   })
  })
  .then(()=>{
-  cerrarModal();
+  modalEditar.classList.add("hidden");
   mostrarInformes();
  });
 }
 
-function cerrarModal(){
- modalEditar.classList.add("hidden");
- editId=null;
- editFecha.value="";
- editDescripcion.value="";
+/* =========================
+   ELIMINAR
+========================= */
+function eliminarInforme(id){
+ if(!confirm("¿Eliminar?")) return;
+
+ fetch(`${API_URL}/informes/${id}`,{
+  method:"DELETE",
+  headers:authHeader()
+ })
+ .then(()=>mostrarInformes());
 }
 
-window.addEventListener("click",(e)=>{
- if(e.target===modalEditar) cerrarModal();
-});
-
 /* =========================
-   PDF FINAL
+   PDF (IGUAL QUE TENÍAS)
 ========================= */
 async function descargarInforme(i){
 
@@ -389,6 +421,7 @@ async function descargarInforme(i){
 
  let y = 20;
 
+ // 🔥 FUNCIÓN PARA SALTO DE LÍNEA AUTOMÁTICO
  function textoLargo(txt, x, yPos, maxWidth = 180){
   const lineas = doc.splitTextToSize(txt || "", maxWidth);
   doc.text(lineas, x, yPos);
@@ -405,15 +438,72 @@ async function descargarInforme(i){
  y = textoLargo(`Sitio: ${i.sitio}`, 20, y);
  y = textoLargo(`Fecha: ${new Date(i.fecha).toLocaleString()}`, 20, y);
 
+ // 🔥 RESPONSABLES 
  y += 5;
+ doc.setFont(undefined, "bold");
  doc.text("Responsables:", 20, y);
+ doc.setFont(undefined, "normal");
+
  y += 7;
  y = textoLargo(i.responsables || "N/A", 20, y);
 
+ // 🔥 DESCRIPCIÓN
  y += 5;
+ doc.setFont(undefined, "bold");
  doc.text("Descripción:", 20, y);
+ doc.setFont(undefined, "normal");
+
  y += 7;
  y = textoLargo(i.descripcion || "", 20, y);
+
+ // 🔥 IMÁGENES
+ if(i.fotos){
+
+  const lista = i.fotos.split(",");
+
+  for(let f of lista){
+
+   try{
+    const url = `${API_URL}/uploads/${f}`;
+
+    const res = await fetch(url);
+    const blob = await res.blob();
+
+    const base64 = await new Promise(resolve=>{
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+
+    const img = new Image();
+    img.src = base64;
+
+    await new Promise(resolve => img.onload = resolve);
+
+    let imgWidth = img.width;
+    let imgHeight = img.height;
+
+    const maxWidth = 180;
+    const ratio = maxWidth / imgWidth;
+
+    imgWidth = maxWidth;
+    imgHeight = imgHeight * ratio;
+
+    // 🔥 SALTO DE PÁGINA
+    if(y + imgHeight > 280){
+     doc.addPage();
+     y = 20;
+    }
+
+    doc.addImage(base64, "JPEG", 15, y, imgWidth, imgHeight);
+
+    y += imgHeight + 10;
+
+   }catch(e){
+    console.log("Error imagen:", e);
+   }
+  }
+ }
 
  doc.save("informe_"+i.id+".pdf");
 }
