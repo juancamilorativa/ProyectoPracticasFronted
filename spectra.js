@@ -30,7 +30,6 @@ const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
 
-/* 🔥 IMPORTANTE (SEPARACIÓN ADMIN / TECNICO) */
 const listaInformesAdmin = document.getElementById("listaInformes");
 const listaInformesTecnico = document.getElementById("listaInformesTecnico");
 
@@ -130,7 +129,7 @@ function mostrarSeccion(sec){
 
  if(sec==="informes"){
   informesSec.classList.remove("hidden");
-  mostrarInformes(); // 🔥 REFRESCO
+  mostrarInformes(); // refrescar
  }
 }
 
@@ -345,13 +344,13 @@ function renderInformes(data){
 
   if(role==="admin"){
    botones=`
-    <button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>
-    <button onclick='eliminarInforme(${i.id})'>🗑</button>
+    <button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>
+    <button onclick='eliminarInforme(${i.id})'>Eliminar</button>
    `;
   }
 
   if(role==="tecnico" && minutos<=15){
-   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>`;
+   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>`;
   }
 
   contenedor.innerHTML+=`
