@@ -413,10 +413,10 @@ function eliminarInforme(id){
 /* =========================
    PDF (IGUAL QUE TENÍAS)
 ========================= */
-function descargarInforme(i){
+async function descargarInforme(i){
 
- const {jsPDF}=window.jspdf;
- const doc=new jsPDF();
+ const { jsPDF } = window.jspdf;
+ const doc = new jsPDF();
 
  doc.text("INFORME",20,20);
  doc.text(`Proyecto: ${i.proyecto}`,20,40);
@@ -428,6 +428,36 @@ function descargarInforme(i){
 
  doc.text("Responsables:",20,100);
  doc.text(i.responsables || "N/A",20,110);
+
+ // 🔥 SI HAY FOTOS
+ if(i.fotos){
+
+  const lista = i.fotos.split(",");
+  let y = 120;
+
+  for(let f of lista){
+
+   try{
+
+    const url = `${API_URL}/uploads/${f}`;
+
+    const res = await fetch(url);
+    const blob = await res.blob();
+
+    const base64 = await new Promise(resolve=>{
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+
+    doc.addImage(base64, "JPEG", 20, y, 60, 40);
+    y += 50;
+
+   }catch(e){
+    console.log("Error cargando imagen:", e);
+   }
+  }
+ }
 
  doc.save("informe_"+i.id+".pdf");
 }
