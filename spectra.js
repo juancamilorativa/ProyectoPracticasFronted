@@ -29,10 +29,9 @@ const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
 
-const listaInformes = document.getElementById("listaInformes");
 
-const filtroProyecto = document.getElementById("filtroProyecto");
-const filtroFecha = document.getElementById("filtroFecha");
+const listaInformesAdmin = document.getElementById("listaInformes");
+const listaInformesTecnico = document.getElementById("listaInformesTecnico");
 
 const modalEditar = document.getElementById("modalEditar");
 const editFecha = document.getElementById("editFecha");
@@ -41,8 +40,8 @@ const editDescripcion = document.getElementById("editDescripcion");
 /* =========================
    MENSAJES
 ========================= */
-function msg(texto, error=false){
- alert((error ? "❌ " : "✅ ") + texto);
+function msg(t, error=false){
+ alert((error ? "❌ " : "✅ ") + t);
 }
 
 /* =========================
@@ -95,12 +94,13 @@ function iniciarApp(role){
   mostrarTecnicos();
   mostrarProyectos();
   mostrarInformes();
+
  }else{
   panelTecnico.classList.remove("hidden");
 
   cargarProyectosSelect();
   cargarTecnicosSelect();
-  mostrarInformes();
+  mostrarInformes(); // 🔥 CLAVE
  }
 }
 
@@ -129,7 +129,7 @@ function mostrarSeccion(sec){
 
  if(sec==="informes"){
   informesSec.classList.remove("hidden");
-  mostrarInformes();
+  mostrarInformes(); // 🔥 REFRESCO
  }
 }
 
@@ -322,12 +322,19 @@ function mostrarInformes(){
 }
 
 /* =========================
-   RENDER
+   RENDER (CORREGIDO)
 ========================= */
 function renderInformes(data){
 
- listaInformes.innerHTML="";
  const role = localStorage.getItem("role");
+
+ const contenedor = role === "admin"
+  ? listaInformesAdmin
+  : listaInformesTecnico;
+
+ if(!contenedor) return;
+
+ contenedor.innerHTML = "";
 
  data.forEach(i=>{
 
@@ -346,7 +353,7 @@ function renderInformes(data){
    botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>`;
   }
 
-  listaInformes.innerHTML+=`
+  contenedor.innerHTML+=`
   <div class="card">
    <b>${i.proyecto}</b><br>
    ${i.sitio}<br>
@@ -404,7 +411,7 @@ function eliminarInforme(id){
 }
 
 /* =========================
-   PDF
+   PDF (IGUAL QUE TENÍAS)
 ========================= */
 function descargarInforme(i){
 
