@@ -100,7 +100,7 @@ function iniciarApp(role){
 
   cargarProyectosSelect();
   cargarTecnicosSelect();
-  mostrarInformes(); // 🔥 CLAVE
+  mostrarInformes(); // 
  }
 }
 
@@ -129,7 +129,7 @@ function mostrarSeccion(sec){
 
  if(sec==="informes"){
   informesSec.classList.remove("hidden");
-  mostrarInformes(); // 🔥 REFRESCO
+  mostrarInformes(); // Refresco
  }
 }
 
@@ -344,13 +344,13 @@ function renderInformes(data){
 
   if(role==="admin"){
    botones=`
-    <button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>
-    <button onclick='eliminarInforme(${i.id})'>🗑</button>
+    <button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>
+    <button onclick='eliminarInforme(${i.id})'>Eliminar</button>
    `;
   }
 
   if(role==="tecnico" && minutos<=15){
-   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>`;
+   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>`;
   }
 
   contenedor.innerHTML+=`
@@ -410,13 +410,13 @@ function eliminarInforme(id){
  .then(()=>mostrarInformes());
 }
 
-/* =========================
-   PDF (IGUAL QUE TENÍAS)
-========================= */
-function descargarInforme(i){
+/* 
+   PDF
+ */
+async function descargarInforme(i){
 
- const {jsPDF}=window.jspdf;
- const doc=new jsPDF();
+ const { jsPDF } = window.jspdf;
+ const doc = new jsPDF();
 
  doc.text("INFORME",20,20);
  doc.text(`Proyecto: ${i.proyecto}`,20,40);
@@ -429,13 +429,35 @@ function descargarInforme(i){
  doc.text("Responsables:",20,100);
  doc.text(i.responsables || "N/A",20,110);
 
- doc.save("informe_"+i.id+".pdf");
-}
+ // si hay fotos
+ if(i.fotos){
 
-/* =========================
-   LOGOUT
-========================= */
-function logout(){
- localStorage.clear();
- location.reload();
+  const lista = i.fotos.split(",");
+  let y = 120;
+
+  for(let f of lista){
+
+   try{
+
+    const url = `${API_URL}/uploads/${f}`;
+
+    const res = await fetch(url);
+    const blob = await res.blob();
+
+    const base64 = await new Promise(resolve=>{
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+
+    doc.addImage(base64, "JPEG", 20, y, 60, 40);
+    y += 50;
+
+   }catch(e){
+    console.log("Error cargando imagen:", e);
+   }
+  }
+ }
+
+ doc.save("informe_"+i.id+".pdf");
 }

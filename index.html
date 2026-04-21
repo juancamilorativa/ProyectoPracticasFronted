@@ -15,10 +15,10 @@
 <!-- LOGIN -->
 <div id="login" class="login">
   <div class="card">
-    <h2>🔐 Iniciar Sesión</h2>
+    <h2> Iniciar Sesión</h2>
 
     <input id="user" placeholder="👤 Usuario">
-    <input id="pass" type="password" placeholder="🔒 Contraseña">
+    <input id="pass" type="password" placeholder=" Contraseña">
 
     <button onclick="login()">Ingresar</button>
   </div>
@@ -28,20 +28,20 @@
 <div id="panelAdmin" class="layout hidden">
 
   <div class="sidebar">
-    <h3>👨‍💼 Panel Administrador</h3>
+    <h3> Panel Administrador</h3>
 
-    <button onclick="mostrarSeccion('tecnicos')">👷 Técnicos</button>
-    <button onclick="mostrarSeccion('proyectos')">📁 Proyectos</button>
-    <button onclick="mostrarSeccion('informes')">📝 Informes</button>
+    <button onclick="mostrarSeccion('tecnicos')"> Técnicos</button>
+    <button onclick="mostrarSeccion('proyectos')"> Proyectos</button>
+    <button onclick="mostrarSeccion('informes')"> Informes</button>
 
-    <button onclick="logout()">🚪 Salir</button>
+    <button onclick="logout()"> Salir</button>
   </div>
 
   <div class="main">
 
     <!-- TECNICOS -->
     <div id="tecnicosSec" class="card hidden">
-      <h3>👷 Gestión de Técnicos</h3>
+      <h3>Gestión de Técnicos</h3>
 
       <input id="nuevoTecnico" placeholder="Nombre del técnico">
       <button onclick="agregarTecnico()">Agregar técnico</button>
@@ -52,7 +52,7 @@
 
     <!-- PROYECTOS -->
     <div id="proyectosSec" class="card hidden">
-      <h3>📁 Gestión de Proyectos</h3>
+      <h3>Gestión de Proyectos</h3>
 
       <input id="numeroProyecto" placeholder="Número del proyecto">
       <input id="nombreSitio" placeholder="Nombre del sitio">
@@ -65,7 +65,7 @@
 
     <!-- INFORMES -->
     <div id="informesSec" class="card hidden">
-      <h3>📝 Informes</h3>
+      <h3> Informes</h3>
       <p>Aquí podrás ver y gestionar los informes creados.</p>
     <div id="listaInformes"></div>
     </div>
@@ -76,7 +76,7 @@
 <!-- TECNICO -->
 <div id="panelTecnico" class="hidden main">
 
-  <h2>👷 Panel Técnico</h2>
+  <h2>Panel Técnico</h2>
 
   <div class="card">
 
@@ -101,16 +101,16 @@
     <button onclick="guardarInforme()">Guardar informe</button>
   </div>
 
-  <h3>📋 Informes registrados</h3>
+  <h3> Informes registrados</h3>
   <div id="listaInformesTecnico">No hay informes aún</div>
 
-  <button onclick="logout()">🚪 Salir</button>
+  <button onclick="logout()"> Salir</button>
 </div>
 
 <!-- MODAL -->
 <div id="modalEditar" class="modal hidden">
   <div class="modal-content">
-    <h3>✏️ Editar Informe</h3>
+    <h3> Editar Informe</h3>
 
     <input type="date" id="editFecha">
     <textarea id="editDescripcion" placeholder="Editar descripción"></textarea>
