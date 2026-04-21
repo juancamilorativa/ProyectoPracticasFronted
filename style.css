@@ -92,3 +92,65 @@ button{
 
 /* OCULTO */
 .hidden{display:none !important;}
+/* =========================
+   LAYOUT BASE
+========================= */
+.layout {
+ display: flex;
+ height: 100vh;
+}
+
+/* SIDEBAR NORMAL (PC) */
+.sidebar {
+ width: 220px;
+ background: #111;
+ color: white;
+ padding: 20px;
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+}
+
+/* CONTENIDO */
+.main {
+ flex: 1;
+ padding: 15px;
+ overflow-y: auto;
+}
+
+/* =========================
+   📱 RESPONSIVE MOVIL
+========================= */
+@media (max-width: 768px){
+
+ .layout {
+  flex-direction: column; /* 🔥 CAMBIA A VERTICAL */
+ }
+
+ .sidebar {
+  width: 100%;
+  height: auto;
+
+  /* 🔥 MENU ABAJO */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+  padding: 10px;
+  z-index: 1000;
+ }
+
+ .sidebar button {
+  flex: 1;
+  font-size: 12px;
+  padding: 10px;
+ }
+
+ .main {
+  padding-bottom: 80px; /* 🔥 espacio para el menú */
+ }
+}
