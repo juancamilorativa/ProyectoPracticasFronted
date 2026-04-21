@@ -1,21 +1,6 @@
 
 let token = localStorage.getItem("token");
-
-/* =========================
-   MENSAJES
-========================= */
-function msg(t, e=false){
- alert((e?"❌ ":"✅ ")+t);
-}
-
-/* =========================
-   AUTH
-========================= */
-function authHeader(){
- return {
-  "Authorization":"Bearer "+localStorage.getItem("token")
- };
-}
+let editId = null;
 
 /* =========================
    ELEMENTOS
@@ -44,10 +29,31 @@ const fecha = document.getElementById("fecha");
 const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
+
 const listaInformes = document.getElementById("listaInformes");
 
 const filtroProyecto = document.getElementById("filtroProyecto");
 const filtroFecha = document.getElementById("filtroFecha");
+
+const modalEditar = document.getElementById("modalEditar");
+const editFecha = document.getElementById("editFecha");
+const editDescripcion = document.getElementById("editDescripcion");
+
+/* =========================
+   MENSAJES
+========================= */
+function msg(t, e=false){
+ alert((e?"❌ ":"✅ ")+t);
+}
+
+/* =========================
+   AUTH
+========================= */
+function authHeader(){
+ return {
+  "Authorization":"Bearer "+localStorage.getItem("token")
+ };
+}
 
 /* =========================
    LOGIN
@@ -55,12 +61,15 @@ const filtroFecha = document.getElementById("filtroFecha");
 function login(){
 
  if(!user.value || !pass.value)
-  return msg("Completa los campos",true);
+  return msg("Completa los campos", true);
 
  fetch(`${API_URL}/login`,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({user:user.value,pass:pass.value})
+  body:JSON.stringify({
+   user:user.value,
+   pass:pass.value
+  })
  })
  .then(async r=>{
   const d = await r.json();
@@ -96,7 +105,7 @@ function iniciarApp(role){
 }
 
 /* AUTO LOGIN */
-window.onload=()=>{
+window.onload = ()=>{
  const role = localStorage.getItem("role");
  if(token && role) iniciarApp(role);
 };
@@ -105,6 +114,7 @@ window.onload=()=>{
    SECCIONES
 ========================= */
 function mostrarSeccion(sec){
+
  tecnicosSec.classList.add("hidden");
  proyectosSec.classList.add("hidden");
  informesSec.classList.add("hidden");
@@ -124,11 +134,16 @@ function agregarTecnico(){
 
  fetch(`${API_URL}/tecnicos`,{
   method:"POST",
-  headers:{ "Content-Type":"application/json", ...authHeader() },
+  headers:{
+   "Content-Type":"application/json",
+   ...authHeader()
+  },
   body:JSON.stringify({nombre:nuevoTecnico.value})
  })
  .then(r=>r.json())
- .then(()=>{
+ .then(d=>{
+  if(!d.ok) return msg(d.error,true);
+
   msg("Técnico agregado");
   nuevoTecnico.value="";
   mostrarTecnicos();
@@ -136,14 +151,29 @@ function agregarTecnico(){
 }
 
 function mostrarTecnicos(){
- fetch(`${API_URL}/tecnicos`,{headers:authHeader()})
+ fetch(`${API_URL}/tecnicos`,{
+  headers:authHeader()
+ })
  .then(r=>r.json())
  .then(d=>{
   listaTecnicos.innerHTML="";
-  d.data.forEach(t=>{
-   listaTecnicos.innerHTML+=`<div>${t.nombre}</div>`;
+
+  (d.data || []).forEach(t=>{
+   listaTecnicos.innerHTML+=`
+   <div>
+    ${t.nombre}
+    <button onclick="eliminarTecnico(${t.id})">🗑</button>
+   </div>`;
   });
  });
+}
+
+function eliminarTecnico(id){
+ fetch(`${API_URL}/tecnicos/${id}`,{
+  method:"DELETE",
+  headers:authHeader()
+ })
+ .then(()=>mostrarTecnicos());
 }
 
 /* =========================
@@ -156,42 +186,63 @@ function agregarProyecto(){
 
  fetch(`${API_URL}/proyectos`,{
   method:"POST",
-  headers:{ "Content-Type":"application/json", ...authHeader() },
+  headers:{
+   "Content-Type":"application/json",
+   ...authHeader()
+  },
   body:JSON.stringify({
    numero:numeroProyecto.value,
    sitio:nombreSitio.value
   })
  })
  .then(r=>r.json())
- .then(()=>{
+ .then(d=>{
+  if(!d.ok) return msg(d.error,true);
+
   msg("Proyecto agregado");
   mostrarProyectos();
  });
 }
 
 function mostrarProyectos(){
- fetch(`${API_URL}/proyectos`,{headers:authHeader()})
+ fetch(`${API_URL}/proyectos`,{
+  headers:authHeader()
+ })
  .then(r=>r.json())
  .then(d=>{
   listaProyectos.innerHTML="";
-  d.data.forEach(p=>{
-   listaProyectos.innerHTML+=`<div>${p.numero} - ${p.sitio}</div>`;
+
+  (d.data || []).forEach(p=>{
+   listaProyectos.innerHTML+=`
+   <div>
+    ${p.numero} - ${p.sitio}
+    <button onclick="eliminarProyecto(${p.id})">🗑</button>
+   </div>`;
   });
  });
 }
 
+function eliminarProyecto(id){
+ fetch(`${API_URL}/proyectos/${id}`,{
+  method:"DELETE",
+  headers:authHeader()
+ })
+ .then(()=>mostrarProyectos());
+}
+
 /* =========================
-   SELECT PROYECTO
+   SELECTS
 ========================= */
 function cargarProyectosSelect(){
  fetch(`${API_URL}/proyectos`,{headers:authHeader()})
  .then(r=>r.json())
  .then(d=>{
   proyecto.innerHTML="";
-  d.data.forEach(p=>{
+
+  (d.data||[]).forEach(p=>{
    proyecto.innerHTML+=`
    <option value="${p.numero}" data-sitio="${p.sitio}">
-   ${p.numero}
+    ${p.numero}
    </option>`;
   });
  });
@@ -199,18 +250,16 @@ function cargarProyectosSelect(){
 
 proyecto.addEventListener("change",()=>{
  const s = proyecto.options[proyecto.selectedIndex];
- sitio.value = s.getAttribute("data-sitio");
+ if(s) sitio.value = s.getAttribute("data-sitio");
 });
 
-/* =========================
-   TECNICOS SELECT
-========================= */
 function cargarTecnicosSelect(){
  fetch(`${API_URL}/tecnicos`,{headers:authHeader()})
  .then(r=>r.json())
  .then(d=>{
   personas.innerHTML="";
-  d.data.forEach(t=>{
+
+  (d.data||[]).forEach(t=>{
    personas.innerHTML+=`<option value="${t.id}">${t.nombre}</option>`;
   });
  });
@@ -242,46 +291,54 @@ function guardarInforme(){
   body:fd
  })
  .then(r=>r.json())
- .then(()=>{
+ .then(d=>{
+  if(!d.ok) return msg(d.error,true);
+
   msg("Informe guardado");
+
+  // limpiar
+  descripcion.value="";
+  fecha.value="";
+  fotos.value="";
+  personas.selectedIndex=-1;
+
   mostrarInformes();
  });
 }
 
 /* =========================
-   RENDER PRO
+   RENDER INFORMES
 ========================= */
 function renderInformes(data){
 
  listaInformes.innerHTML="";
+ const role = localStorage.getItem("role");
 
- if(!data.length){
-  listaInformes.innerHTML="Sin informes";
-  return;
- }
+ (data||[]).forEach(i=>{
 
- data.forEach(i=>{
+  const minutos = (new Date() - new Date(i.fecha)) / 60000;
 
-  let fotosHTML="";
-  if(i.fotos){
-   i.fotos.split(",").forEach(f=>{
-    fotosHTML+=`<img src="${API_URL}/uploads/${f}" width="60">`;
-   });
+  let botones="";
+
+  if(role==="admin"){
+   botones=`
+    <button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>
+    <button onclick='eliminarInforme(${i.id})'>🗑</button>
+   `;
+  }
+
+  if(role==="tecnico" && minutos<=15){
+   botones=`<button onclick='editarInforme(${JSON.stringify(i)})'>✏️</button>`;
   }
 
   listaInformes.innerHTML+=`
-  <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+  <div class="card">
+   <b>${i.proyecto}</b> - ${i.sitio}<br>
+   ${i.fecha}<br>
+   ${i.descripcion}<br>
 
-   <b>Proyecto:</b> ${i.proyecto}<br>
-   <b>Sitio:</b> ${i.sitio}<br>
-   <b>Fecha:</b> ${i.fecha}<br>
-   <b>Descripción:</b> ${i.descripcion}<br>
-
-   ${fotosHTML}<br>
-
+   ${botones}
    <button onclick='descargarInforme(${JSON.stringify(i)})'>PDF</button>
-   <button onclick='eliminarInforme(${i.id})'>Eliminar</button>
-
   </div>`;
  });
 }
@@ -293,7 +350,7 @@ function mostrarInformes(){
 }
 
 /* =========================
-   FILTRO
+   FILTROS
 ========================= */
 function filtrarInformes(){
 
@@ -301,15 +358,43 @@ function filtrarInformes(){
  .then(r=>r.json())
  .then(d=>{
 
-  let data=d.data;
+  let data = d.data || [];
 
   if(filtroProyecto.value)
-   data=data.filter(i=>i.proyecto.includes(filtroProyecto.value));
+   data = data.filter(i=>i.proyecto.includes(filtroProyecto.value));
 
   if(filtroFecha.value)
-   data=data.filter(i=>i.fecha===filtroFecha.value);
+   data = data.filter(i=>i.fecha===filtroFecha.value);
 
   renderInformes(data);
+ });
+}
+
+/* =========================
+   EDITAR
+========================= */
+function editarInforme(i){
+ editId=i.id;
+ editFecha.value=i.fecha;
+ editDescripcion.value=i.descripcion;
+ modalEditar.classList.remove("hidden");
+}
+
+function guardarEdicion(){
+ fetch(`${API_URL}/informes/${editId}`,{
+  method:"PUT",
+  headers:{
+   "Content-Type":"application/json",
+   ...authHeader()
+  },
+  body:JSON.stringify({
+   fecha:editFecha.value,
+   descripcion:editDescripcion.value
+  })
+ })
+ .then(()=>{
+  modalEditar.classList.add("hidden");
+  mostrarInformes();
  });
 }
 
@@ -318,7 +403,7 @@ function filtrarInformes(){
 ========================= */
 function eliminarInforme(id){
 
- if(!confirm("Eliminar?")) return;
+ if(!confirm("¿Eliminar?")) return;
 
  fetch(`${API_URL}/informes/${id}`,{
   method:"DELETE",
@@ -335,16 +420,11 @@ function descargarInforme(i){
  const {jsPDF}=window.jspdf;
  const doc=new jsPDF();
 
- doc.setFontSize(16);
- doc.text("INFORME TECNICO",20,20);
-
- doc.setFontSize(12);
- doc.text("Proyecto: "+i.proyecto,20,40);
- doc.text("Sitio: "+i.sitio,20,50);
- doc.text("Fecha: "+i.fecha,20,60);
-
- doc.text("Descripcion:",20,80);
- doc.text(i.descripcion||"",20,90,{maxWidth:160});
+ doc.text("INFORME",20,20);
+ doc.text(`Proyecto: ${i.proyecto}`,20,40);
+ doc.text(`Sitio: ${i.sitio}`,20,50);
+ doc.text(`Fecha: ${i.fecha}`,20,60);
+ doc.text(i.descripcion||"",20,80);
 
  doc.save("informe_"+i.id+".pdf");
 }
