@@ -45,7 +45,7 @@ input, select, textarea{
 button{
   padding:10px;
   border:none;
-  background:#2c3e50;
+  background:#106ecc;
   color:white;
   border-radius:5px;
   cursor:pointer;
@@ -53,7 +53,7 @@ button{
 }
 
 button:hover{
-  background:#34495e;
+  background:#05478a;
 }
 
 /* LAYOUT */
@@ -77,7 +77,7 @@ button:hover{
 .sidebar button{
   width:100%;
   margin-bottom:10px;
-  background:#2c3e50;
+  background:#115eac;
 }
 
 /* MAIN */
