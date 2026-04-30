@@ -168,3 +168,54 @@ button{
  .main{
   padding-top:120px;
  }
+/* CONTENEDOR PRINCIPAL */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 10px;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* MENÚ */
+.menu {
+  display: flex;
+  gap: 10px;
+}
+
+/* BOTONES */
+.menu button {
+  padding: 8px 12px;
+  border: none;
+  background: #2c3e50;
+  color: white;
+  cursor: pointer;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 600px) {
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .menu button {
+    width: 100%;
+    text-align: center;
+  }
+}
