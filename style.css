@@ -1,221 +1,159 @@
 *{
- margin:0;
- padding:0;
- box-sizing:border-box;
- font-family:sans-serif;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
- background:#f4f6f9;
+  background:#f4f6f9;
 }
 
 /* LOGIN */
 .login{
- position:fixed;
- top:0;
- left:0;
- width:100%;
- height:100%;
- display:flex;
- justify-content:center;
- align-items:center;
- background:#f4f6f9;
- z-index:1000;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-/* =========================
-   LAYOUT
-========================= */
+.card{
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  width:100%;
+  max-width:400px;
+}
+
+.card h2, .card h3{
+  margin-bottom:15px;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border:1px solid #ccc;
+  border-radius:5px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  background:#2c3e50;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+  margin-top:10px;
+}
+
+button:hover{
+  background:#34495e;
+}
+
+/* LAYOUT */
 .layout{
- display:flex;
- height:100vh;
+  display:flex;
+  min-height:100vh;
 }
 
 /* SIDEBAR */
 .sidebar{
- width:220px;
- background:#111;
- color:white;
- padding:20px;
- display:flex;
- flex-direction:column;
- gap:10px;
+  width:250px;
+  background:#111;
+  color:white;
+  padding:20px;
+}
+
+.sidebar h3{
+  margin-bottom:20px;
 }
 
 .sidebar button{
- width:100%;
- margin:5px 0;
- padding:10px;
- background:#334155;
- color:white;
- border:none;
- cursor:pointer;
+  width:100%;
+  margin-bottom:10px;
+  background:#2c3e50;
 }
 
 /* MAIN */
 .main{
- flex:1;
- padding:20px;
- overflow-y:auto;
+  flex:1;
+  padding:20px;
 }
 
-/* CARD */
-.card{
- background:white;
- padding:15px;
- margin:10px 0;
- border-radius:10px;
-}
-
-/* INPUTS */
-input,select,textarea{
- width:100%;
- margin:5px 0;
- padding:8px;
-}
-
-button{
- background:#3b82f6;
- color:white;
- padding:8px;
- border:none;
- cursor:pointer;
+/* LISTAS */
+#listaTecnicos div,
+#listaProyectos div,
+#listaInformes div{
+  background:white;
+  padding:10px;
+  margin:5px 0;
+  border-radius:5px;
 }
 
 /* MODAL */
 .modal{
- position:fixed;
- top:0;
- left:0;
- width:100%;
- height:100%;
- background:rgba(0,0,0,0.5);
- display:flex;
- justify-content:center;
- align-items:center;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
 .modal-content{
- background:white;
- padding:20px;
- border-radius:10px;
- width:90%;
- max-width:400px;
- display:flex;
- flex-direction:column;
- gap:10px;
-}
-
-.botones-modal{
- display:flex;
- justify-content:flex-end;
- gap:10px;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+  width:90%;
+  max-width:400px;
 }
 
 /* OCULTO */
 .hidden{
- display:none !important;
+  display:none;
 }
 
-/* =========================
-   📱 RESPONSIVE MOVIL
-========================= */
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
+/* 📱 RESPONSIVE (AQUÍ ESTÁ LA MAGIA) */
+@media (max-width:768px){
 
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
+  .layout{
+    flex-direction:column;
   }
 
-  .menu {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  .sidebar{
+    width:100%;
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    align-items:center;
+    padding:10px;
   }
 
-  .menu button {
-    width: 100%;
-    text-align: center;
-  }
-}
-
- /* MENU ARRIBA */
- .sidebar{
-  width:100%;
-  height:auto;
-
-  position:fixed;
-  top:0;
-  left:0;
-
-  display:flex;
-  flex-direction:row;
-  justify-content:space-around;
-
-  padding:10px;
-  z-index:1000;
- }
-
- .sidebar button{
-  flex:1;
-  font-size:12px;
-  padding:10px;
- }
-
- /* IMPORTANTE: EVITA QUE LO TAPEN */
- .main{
-  padding-top:120px;
- }
-/* CONTENEDOR PRINCIPAL */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  padding: 10px;
-}
-
-/* HEADER */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* MENÚ */
-.menu {
-  display: flex;
-  gap: 10px;
-}
-
-/* BOTONES */
-.menu button {
-  padding: 8px 12px;
-  border: none;
-  background: #2c3e50;
-  color: white;
-  cursor: pointer;
-}
-
-/* 📱 RESPONSIVE */
-@media (max-width: 600px) {
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
+  .sidebar h3{
+    display:none; /* ocultamos título en móvil */
   }
 
-  .menu {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+  .sidebar button{
+    flex:1;
+    margin:5px;
+    font-size:12px;
+    padding:8px;
   }
 
-  .menu button {
-    width: 100%;
-    text-align: center;
+  .main{
+    padding:10px;
+  }
+
+  .card{
+    max-width:100%;
   }
 }
