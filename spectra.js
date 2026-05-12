@@ -76,7 +76,7 @@ function login(){
   localStorage.setItem("token", d.data.token);
   localStorage.setItem("role", d.data.role);
 
-  iniciarApp(d.data.role);
+  iniciarApp(d.data.rol);
  })
  .catch(()=>msg("Error conexión",true));
 }
