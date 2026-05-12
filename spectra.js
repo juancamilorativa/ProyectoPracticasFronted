@@ -61,7 +61,7 @@ function login(){
  if(!user.value || !pass.value)
   return msg("Completa los campos", true);
 
- fetch(`${API_URL}/login`,{
+ fetch(`${API_URL}/auth/login`,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
   body:JSON.stringify({
@@ -100,7 +100,7 @@ function iniciarApp(role){
 
   cargarProyectosSelect();
   cargarTecnicosSelect();
-  mostrarInformes(); // 🔥 CLAVE
+  mostrarInformes(); //  CLAVE
  }
 }
 
@@ -322,7 +322,7 @@ function mostrarInformes(){
 }
 
 /* =========================
-   RENDER (CORREGIDO)
+   RENDER 
 ========================= */
 function renderInformes(data){
 
@@ -430,7 +430,7 @@ async function descargarInforme(i){
 
  let y = 20;
 
- // 🔥 FUNCIÓN PARA SALTO DE LÍNEA AUTOMÁTICO
+ //  FUNCIÓN PARA SALTO DE LÍNEA AUTOMÁTICO
  function textoLargo(txt, x, yPos, maxWidth = 180){
   const lineas = doc.splitTextToSize(txt || "", maxWidth);
   doc.text(lineas, x, yPos);
@@ -447,7 +447,7 @@ async function descargarInforme(i){
  y = textoLargo(`Sitio: ${i.sitio}`, 20, y);
  y = textoLargo(`Fecha: ${new Date(i.fecha).toLocaleString()}`, 20, y);
 
- // 🔥 RESPONSABLES 
+ //  RESPONSABLES 
  y += 5;
  doc.setFont(undefined, "bold");
  doc.text("Responsables:", 20, y);
@@ -456,7 +456,7 @@ async function descargarInforme(i){
  y += 7;
  y = textoLargo(i.responsables || "N/A", 20, y);
 
- // 🔥 DESCRIPCIÓN
+ // DESCRIPCIÓN
  y += 5;
  doc.setFont(undefined, "bold");
  doc.text("Descripción:", 20, y);
@@ -465,7 +465,7 @@ async function descargarInforme(i){
  y += 7;
  y = textoLargo(i.descripcion || "", 20, y);
 
- // 🔥 IMÁGENES
+ //  IMÁGENES
  if(i.fotos){
 
   const lista = i.fotos.split(",");
@@ -498,7 +498,7 @@ async function descargarInforme(i){
     imgWidth = maxWidth;
     imgHeight = imgHeight * ratio;
 
-    // 🔥 SALTO DE PÁGINA
+    //  SALTO DE PÁGINA
     if(y + imgHeight > 280){
      doc.addPage();
      y = 20;

@@ -122,7 +122,7 @@ button:hover{
   display:none;
 }
 
-/* 📱 RESPONSIVE (AQUÍ ESTÁ LA MAGIA) */
+/*  RESPONSIVE  */
 @media (max-width:768px){
 
   .layout{
@@ -139,7 +139,7 @@ button:hover{
   }
 
   .sidebar h3{
-    display:none; /* ocultamos título en móvil */
+    display:none; 
   }
 
   .sidebar button{
