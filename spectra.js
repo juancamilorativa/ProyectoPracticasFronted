@@ -247,9 +247,9 @@ function cargarProyectosSelect(){
 
   (d.data||[]).forEach(p=>{
    proyecto.innerHTML+=`
-   <option value="${p.numero}" data-sitio="${p.sitio}">
-    ${p.numero}
-   </option>`;
+   <option value="${p.nombre}">
+ ${p.nombre}
+</option>`;
   });
  });
 }
