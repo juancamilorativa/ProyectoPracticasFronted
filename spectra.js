@@ -198,8 +198,9 @@ function agregarProyecto(){
    ...authHeader()
   },
   body:JSON.stringify({
-   nombre: numeroProyecto.value + " - " + nombreSitio.value
-})
+   numero:numeroProyecto.value,
+   sitio:nombreSitio.value
+   })
  })
  .then(r=>r.json())
  .then(d=>{
@@ -247,8 +248,8 @@ function cargarProyectosSelect(){
 
   (d.data||[]).forEach(p=>{
    proyecto.innerHTML+=`
-   <option value="${p.nombre}">
- ${p.nombre}
+   <option value="${p.numero}" data-sitio="${p.sitio}">
+ ${p.numero}
 </option>`;
   });
  });
