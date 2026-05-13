@@ -74,7 +74,7 @@ function login(){
   if(!d.ok) return msg(d.error,true);
 
   localStorage.setItem("token", d.data.token);
-  localStorage.setItem("role", d.data.role);
+  localStorage.setItem("role", d.data.rol);
 
   iniciarApp(d.data.rol);
  })
