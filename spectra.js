@@ -222,7 +222,7 @@ function mostrarProyectos(){
   (d.data||[]).forEach(p=>{
    listaProyectos.innerHTML+=`
    <div>
-   ${p.nombre}
+     ${p.numero} - ${p.sitio}
    <button onclick="eliminarProyecto('${p._id}')">Eliminar</button>
    </div>`;
   });
