@@ -198,9 +198,8 @@ function agregarProyecto(){
    ...authHeader()
   },
   body:JSON.stringify({
-   numero:numeroProyecto.value,
-   sitio:nombreSitio.value
-  })
+   nombre: numeroProyecto.value + " - " + nombreSitio.value
+})
  })
  .then(r=>r.json())
  .then(d=>{
@@ -222,8 +221,8 @@ function mostrarProyectos(){
   (d.data||[]).forEach(p=>{
    listaProyectos.innerHTML+=`
    <div>
-    ${p.numero} - ${p.sitio}
-    <button onclick="eliminarProyecto(${p.id})">Eliminar</button>
+   ${p.nombre}
+   <button onclick="eliminarProyecto('${p._id}')">Eliminar</button>
    </div>`;
   });
  });
