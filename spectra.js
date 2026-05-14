@@ -95,13 +95,11 @@ function iniciarApp(role){
   mostrarProyectos();
   mostrarInformes();
 
- }else{
+}else{
+
   panelTecnico.classList.remove("hidden");
 
-  cargarProyectosSelect();
-  cargarTecnicosSelect();
- mostrarVistaInformesTecnico();
- }
+}
 }
 
 /* AUTO LOGIN */
