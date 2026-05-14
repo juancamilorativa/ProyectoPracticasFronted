@@ -345,7 +345,7 @@ function renderInformes(data){
   if(role==="admin"){
    botones=`
     <button onclick='editarInforme(${JSON.stringify(i)})'>Editar</button>
-    <button onclick='eliminarInforme(${i.id})'>Eliminar</button>
+   <button onclick="eliminarInforme('${i._id}')">Eliminar</button>
    `;
   }
 
@@ -374,7 +374,9 @@ function renderInformes(data){
 ========================= */
 function editarInforme(i){
  editId=i._id;
- editFecha.value=i.fecha;
+ editFecha.value = new Date(i.fecha)
+  .toISOString()
+  .split("T")[0];
  editDescripcion.value=i.descripcion;
  modalEditar.classList.remove("hidden");
 }
