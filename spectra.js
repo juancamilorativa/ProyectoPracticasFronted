@@ -100,7 +100,7 @@ function iniciarApp(role){
 
   cargarProyectosSelect();
   cargarTecnicosSelect();
-  mostrarInformes(); //  CLAVE
+ mostrarVistaInformesTecnico();
  }
 }
 
@@ -131,6 +131,33 @@ function mostrarSeccion(sec){
   informesSec.classList.remove("hidden");
   mostrarInformes(); // refrescar
  }
+}
+
+function mostrarVistaInformesTecnico(){
+
+ document
+  .getElementById("vistaInformesTecnico")
+  .classList.remove("hidden");
+
+ document
+  .getElementById("vistaCrearTecnico")
+  .classList.add("hidden");
+
+ mostrarInformes();
+}
+
+function mostrarVistaCrearTecnico(){
+
+ document
+  .getElementById("vistaInformesTecnico")
+  .classList.add("hidden");
+
+ document
+  .getElementById("vistaCrearTecnico")
+  .classList.remove("hidden");
+
+ cargarProyectosSelect();
+ cargarTecnicosSelect();
 }
 
 /* =========================
@@ -366,6 +393,66 @@ function renderInformes(data){
 
    <button onclick='descargarInforme(${JSON.stringify(i)})'>PDF</button>
   </div>`;
+ });
+}
+
+/* =========================
+   FILTRAR ADMIN
+========================= */
+function filtrarInformesAdmin(){
+
+ const texto = document
+  .getElementById("busquedaInformesAdmin")
+  .value
+  .toLowerCase();
+
+ fetch(`${API_URL}/informes`,{
+  headers:authHeader()
+ })
+ .then(r=>r.json())
+ .then(d=>{
+
+  const filtrados = (d.data || []).filter(i => {
+
+   return (
+    (i.proyecto || "").toLowerCase().includes(texto) ||
+    (i.sitio || "").toLowerCase().includes(texto)
+   );
+
+  });
+
+  renderInformes(filtrados);
+
+ });
+}
+
+/* =========================
+   FILTRAR TECNICO
+========================= */
+function filtrarInformesTecnico(){
+
+ const texto = document
+  .getElementById("busquedaInformesTecnico")
+  .value
+  .toLowerCase();
+
+ fetch(`${API_URL}/informes`,{
+  headers:authHeader()
+ })
+ .then(r=>r.json())
+ .then(d=>{
+
+  const filtrados = (d.data || []).filter(i => {
+
+   return (
+    (i.proyecto || "").toLowerCase().includes(texto) ||
+    (i.sitio || "").toLowerCase().includes(texto)
+   );
+
+  });
+
+  renderInformes(filtrados);
+
  });
 }
 
