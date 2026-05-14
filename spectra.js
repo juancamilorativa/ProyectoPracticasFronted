@@ -169,7 +169,7 @@ function mostrarTecnicos(){
    listaTecnicos.innerHTML+=`
    <div>
     ${t.nombre}
-    <button onclick="eliminarTecnico(${t._id})">Eliminar</button>
+     <button onclick="eliminarTecnico('${t._id}')">Eliminar</button> 
    </div>`;
   });
  });
