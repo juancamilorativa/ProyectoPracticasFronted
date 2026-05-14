@@ -223,7 +223,7 @@ function mostrarProyectos(){
    listaProyectos.innerHTML+=`
    <div>
      ${p.numero} - ${p.sitio}
-   <button onclick="eliminarProyecto('${p._id}')">Eliminar</button>
+   <button onclick="eliminarInforme('${i._id}')">Eliminar</button>
    </div>`;
   });
  });
@@ -373,7 +373,7 @@ function renderInformes(data){
    EDITAR
 ========================= */
 function editarInforme(i){
- editId=i.id;
+ editId=i._id;
  editFecha.value=i.fecha;
  editDescripcion.value=i.descripcion;
  modalEditar.classList.remove("hidden");
@@ -421,7 +421,7 @@ function eliminarInforme(id){
 }
 
 /* =========================
-   PDF (IGUAL QUE TENÍAS)
+   PDF
 ========================= */
 async function descargarInforme(i){
 
@@ -514,7 +514,7 @@ async function descargarInforme(i){
   }
  }
 
- doc.save("informe_"+i.id+".pdf");
+doc.save("informe_"+i._id+".pdf");
 }
 
 /* =========================
