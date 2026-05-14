@@ -468,7 +468,9 @@ async function descargarInforme(i){
  //  IMÁGENES
  if(i.fotos){
 
-  const lista = i.fotos.split(",");
+ const lista = Array.isArray(i.fotos)
+ ? i.fotos
+ : [];
 
   for(let f of lista){
 
