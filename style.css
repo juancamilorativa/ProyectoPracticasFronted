@@ -260,37 +260,87 @@ button:hover{
 /*  RESPONSIVE  */
 @media (max-width:768px){
 
+  body{
+    overflow-x:hidden;
+  }
+
   .layout{
     flex-direction:column;
+    width:100%;
   }
 
   .sidebar{
     width:100%;
     display:flex;
-    flex-direction:row;
-    justify-content:space-around;
+    flex-wrap:wrap;
+    justify-content:center;
     align-items:center;
+    gap:8px;
     padding:10px;
   }
 
   .sidebar h3{
-    display:none; 
+    width:100%;
+    text-align:center;
+    margin-bottom:10px;
+    display:block;
   }
 
   .sidebar button{
-    flex:1;
-    margin:5px;
-    font-size:12px;
-    padding:8px;
+    flex:1 1 120px;
+    margin:0;
+    font-size:13px;
+    padding:10px;
   }
 
   .main{
+    width:100%;
     padding:10px;
   }
 
   .card{
+    width:100%;
+    max-width:100%;
+    padding:15px;
+    overflow:hidden;
+  }
+
+  input,
+  select,
+  textarea,
+  button{
+    width:100%;
     max-width:100%;
   }
+
+  #listaInformes,
+  #listaInformesTecnico{
+    width:100%;
+  }
+
+  #listaInformes .card,
+  #listaInformesTecnico .card{
+    width:100%;
+    word-break:break-word;
+  }
+
+  .buscador-box{
+    flex-direction:column;
+  }
+
+  .buscador-box input,
+  .buscador-box button{
+    width:100%;
+  }
+
+  .menu-tecnico{
+    flex-direction:column;
+  }
+
+  .menu-tecnico button{
+    width:100%;
+  }
+
 }
 /* =========================
    BUSCADOR INFORMES
