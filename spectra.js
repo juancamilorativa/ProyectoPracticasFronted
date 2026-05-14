@@ -267,7 +267,7 @@ function cargarTecnicosSelect(){
   personas.innerHTML="";
 
   (d.data||[]).forEach(t=>{
-   personas.innerHTML+=`<option value="${t.id}">${t.nombre}</option>`;
+ personas.innerHTML+=`<option value="${t._id}">${t.nombre}</option>`;
   });
  });
 }
