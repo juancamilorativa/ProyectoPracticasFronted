@@ -374,9 +374,17 @@ function renderInformes(data){
 ========================= */
 function editarInforme(i){
  editId=i._id;
+ if(i.fecha){
+
  editFecha.value = new Date(i.fecha)
   .toISOString()
   .split("T")[0];
+
+}else{
+
+ editFecha.value = "";
+
+}
  editDescripcion.value=i.descripcion;
  modalEditar.classList.remove("hidden");
 }
