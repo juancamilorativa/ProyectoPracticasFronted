@@ -37,6 +37,14 @@ const modalEditar = document.getElementById("modalEditar");
 const editFecha = document.getElementById("editFecha");
 const editDescripcion = document.getElementById("editDescripcion");
 
+const usuariosSec = document.getElementById("usuariosSec");
+
+const nuevoEmail = document.getElementById("nuevoEmail");
+const nuevoPassword = document.getElementById("nuevoPassword");
+const nuevoRol = document.getElementById("nuevoRol");
+
+const listaUsuarios = document.getElementById("listaUsuarios");
+
 /* =========================
    MENSAJES
 ========================= */
@@ -64,19 +72,19 @@ function login(){
  fetch(`${API_URL}/auth/login`,{
   method:"POST",
   headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({
-   user:user.value,
-   pass:pass.value
-  })
+ body:JSON.stringify({
+ email:user.value,
+ password:pass.value
+})
  })
  .then(r=>r.json())
  .then(d=>{
   if(!d.ok) return msg(d.error,true);
 
   localStorage.setItem("token", d.data.token);
-  localStorage.setItem("role", d.data.rol);
+  localStorage.setItem("role", d.data.role);
 
-  iniciarApp(d.data.rol);
+  iniciarApp(d.data.role);
  })
  .catch(()=>msg("Error conexión",true));
 }
@@ -99,6 +107,9 @@ function iniciarApp(role){
 
   panelTecnico.classList.remove("hidden");
 
+  cargarProyectosSelect();
+  cargarTecnicosSelect();
+
 }
 }
 
@@ -116,6 +127,7 @@ function mostrarSeccion(sec){
  tecnicosSec.classList.add("hidden");
  proyectosSec.classList.add("hidden");
  informesSec.classList.add("hidden");
+  usuariosSec.classList.add("hidden");
 
  if(sec==="tecnicos"){
   tecnicosSec.classList.remove("hidden");
@@ -129,6 +141,13 @@ function mostrarSeccion(sec){
   informesSec.classList.remove("hidden");
   mostrarInformes(); // refrescar
  }
+
+  if(sec==="usuarios"){
+  usuariosSec.classList.remove("hidden");
+  mostrarUsuarios();
+ }
+
+
 }
 
 function mostrarVistaInformesTecnico(){
@@ -140,8 +159,6 @@ function mostrarVistaInformesTecnico(){
  document
   .getElementById("vistaCrearTecnico")
   .classList.add("hidden");
-
- mostrarInformes();
 }
 
 function mostrarVistaCrearTecnico(){
@@ -248,7 +265,7 @@ function mostrarProyectos(){
    listaProyectos.innerHTML+=`
    <div>
      ${p.numero} - ${p.sitio}
-   <button onclick="eliminarInforme('${i._id}')">Eliminar</button>
+  <button onclick="eliminarProyecto('${p._id}')">Eliminar</button>
    </div>`;
   });
  });
@@ -614,9 +631,66 @@ async function descargarInforme(i){
 doc.save("informe_"+i._id+".pdf");
 }
 
+
+function crearUsuario(){
+
+ fetch(`${API_URL}/auth/register`,{
+  method:"POST",
+  headers:{
+   "Content-Type":"application/json",
+   ...authHeader()
+  },
+  body:JSON.stringify({
+   email:nuevoEmail.value,
+   password:nuevoPassword.value,
+   role:nuevoRol.value
+  })
+ })
+ .then(r=>r.json())
+ .then(d=>{
+
+  if(!d.ok)
+   return msg(d.error,true);
+
+  msg("Usuario creado");
+
+  nuevoEmail.value="";
+  nuevoPassword.value="";
+
+  mostrarUsuarios();
+
+ });
+
+}
+
+function mostrarUsuarios(){
+
+ fetch(`${API_URL}/auth/users`,{
+  headers:authHeader()
+ })
+ .then(r=>r.json())
+ .then(d=>{
+
+  listaUsuarios.innerHTML="";
+
+  (d.data || []).forEach(u=>{
+
+   listaUsuarios.innerHTML += `
+   <div class="card">
+    ${u.email} - ${u.role}
+   </div>
+   `;
+
+  });
+
+ });
+
+}
+
 /* =========================
    LOGOUT
 ========================= */
+
 function logout(){
  localStorage.clear();
  location.reload();

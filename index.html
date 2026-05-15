@@ -61,11 +61,42 @@
     <button onclick="mostrarSeccion('tecnicos')"> Técnicos</button>
     <button onclick="mostrarSeccion('proyectos')"> Proyectos</button>
     <button onclick="mostrarSeccion('informes')"> Informes</button>
+    <button onclick="mostrarSeccion('usuarios')">Usuarios</button>
 
     <button onclick="logout()">Salir</button>
   </div>
 
   <div class="main">
+
+    <div id="usuariosSec" class="card hidden">
+
+  <h3>Gestión de usuarios</h3>
+
+  <input id="nuevoEmail" placeholder="Correo">
+
+  <input
+    id="nuevoPassword"
+    type="password"
+    placeholder="Contraseña"
+  >
+
+  <select id="nuevoRol">
+
+    <option value="admin">Admin</option>
+
+    <option value="tecnico">
+      Técnico
+    </option>
+
+  </select>
+
+  <button onclick="crearUsuario()">
+    Crear usuario
+  </button>
+
+  <div id="listaUsuarios"></div>
+
+</div>
 
     <!-- TECNICOS -->
     <div id="tecnicosSec" class="card hidden">
