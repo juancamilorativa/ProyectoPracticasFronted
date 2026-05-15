@@ -73,7 +73,7 @@ function login(){
   method:"POST",
   headers:{"Content-Type":"application/json"},
  body:JSON.stringify({
- email:user.value,
+ correo:user.value,
  password:pass.value
 })
  })
