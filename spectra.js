@@ -64,6 +64,9 @@ function authHeader(){
 /* =========================
    LOGIN
 ========================= */
+/* =========================
+   LOGIN
+========================= */
 function login(){
 
  if(!user.value || !pass.value)
@@ -71,20 +74,26 @@ function login(){
 
  fetch(`${API_URL}/auth/login`,{
   method:"POST",
-  headers:{"Content-Type":"application/json"},
- body:JSON.stringify({
- correo:user.value,
- password:pass.value
-})
+  headers:{
+   "Content-Type":"application/json"
+  },
+  body:JSON.stringify({
+   correo:user.value,
+   password:pass.value
+  })
  })
  .then(r=>r.json())
  .then(d=>{
-  if(!d.ok) return msg(d.error,true);
+
+  if(!d.ok)
+   return msg(d.error,true);
 
   localStorage.setItem("token", d.data.token);
-  localStorage.setItem("role", d.data.role);
 
-  iniciarApp(d.data.role);
+  localStorage.setItem("role", d.data.rol);
+
+  iniciarApp(d.data.rol);
+
  })
  .catch(()=>msg("Error conexión",true));
 }
@@ -641,9 +650,9 @@ function crearUsuario(){
    ...authHeader()
   },
   body:JSON.stringify({
-   email:nuevoEmail.value,
+   correo:nuevoEmail.value,
    password:nuevoPassword.value,
-   role:nuevoRol.value
+   rol:nuevoRol.value
   })
  })
  .then(r=>r.json())
@@ -665,7 +674,7 @@ function crearUsuario(){
 
 function mostrarUsuarios(){
 
- fetch(`${API_URL}/auth/users`,{
+ fetch(`${API_URL}/auth/usuarios`,{
   headers:authHeader()
  })
  .then(r=>r.json())
@@ -677,7 +686,7 @@ function mostrarUsuarios(){
 
    listaUsuarios.innerHTML += `
    <div class="card">
-    ${u.email} - ${u.role}
+    ${u.correo} - ${u.rol}
    </div>
    `;
 
