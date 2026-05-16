@@ -643,11 +643,16 @@ doc.save("informe_"+i._id+".pdf");
 
 function crearUsuario(){
 
+ console.log({
+  correo:nuevoEmail.value,
+  password:nuevoPassword.value,
+  rol:nuevoRol.value
+ });
+
  fetch(`${API_URL}/auth/register`,{
   method:"POST",
   headers:{
-   "Content-Type":"application/json",
-   ...authHeader()
+   "Content-Type":"application/json"
   },
   body:JSON.stringify({
    correo:nuevoEmail.value,
@@ -655,11 +660,16 @@ function crearUsuario(){
    rol:nuevoRol.value
   })
  })
- .then(r=>r.json())
- .then(d=>{
+ .then(async r=>{
 
-  if(!d.ok)
-   return msg(d.error,true);
+  const data = await r.json();
+
+  console.log("RESPUESTA:", data);
+
+  if(!data.ok){
+   msg(data.error || data.mensaje,true);
+   return;
+  }
 
   msg("Usuario creado");
 
@@ -668,6 +678,9 @@ function crearUsuario(){
 
   mostrarUsuarios();
 
+ })
+ .catch(err=>{
+  console.log(err);
  });
 
 }
