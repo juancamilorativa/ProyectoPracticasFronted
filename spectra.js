@@ -701,25 +701,52 @@ function mostrarUsuarios(){
  fetch(`${API_URL}/auth/usuarios`,{
   headers:authHeader()
  })
-
  .then(r=>r.json())
-
  .then(d=>{
 
   listaUsuarios.innerHTML="";
 
-  (d.data || []).forEach(u=>{
+  (d.data || []).forEach((u,index)=>{
 
    listaUsuarios.innerHTML += `
-   <div class="card">
 
-    ${u.nombre} <br>
+   <div class="usuario-card">
 
-    ${u.correo} <br>
+    <div class="usuario-item">
+      <b>Nombre:</b> ${u.nombre}
+    </div>
 
-    Rol: ${u.rol}
+    <div class="usuario-item">
+      <b>Correo:</b> ${u.correo}
+    </div>
+
+    <div class="usuario-item">
+      <b>Rol:</b> ${u.rol}
+    </div>
+
+    <div class="usuario-item senha-box">
+
+      <b>Contraseña:</b>
+
+      <input 
+        type="password"
+        value="********"
+        id="pass-${index}"
+        class="input-password"
+        readonly
+      >
+
+      <button 
+        class="btn-ojo"
+        onclick="togglePassword('pass-${index}', this)"
+      >
+        👁
+      </button>
+
+    </div>
 
    </div>
+
    `;
 
   });
@@ -728,6 +755,33 @@ function mostrarUsuarios(){
 
 }
 
+/* =========================
+   MOSTRAR / OCULTAR PASSWORD
+========================= */
+
+function togglePassword(id, btn){
+
+ const input = document.getElementById(id);
+
+ if(input.type === "password"){
+
+  input.type = "text";
+
+  input.value = "123456";
+
+  btn.innerHTML = "🙈";
+
+ }else{
+
+  input.type = "password";
+
+  input.value = "********";
+
+  btn.innerHTML = "👁";
+
+ }
+
+}
 /* =========================
    LOGOUT
 ========================= */

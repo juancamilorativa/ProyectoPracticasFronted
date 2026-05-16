@@ -411,3 +411,54 @@ button:hover{
   background:#374151;
   transform:translateY(-2px);
 }
+
+.usuario-card{
+
+ background:#fff;
+ padding:15px;
+ margin-bottom:15px;
+ border-radius:10px;
+ box-shadow:0 2px 6px rgba(0,0,0,.1);
+
+}
+
+.usuario-item{
+
+ margin-bottom:8px;
+ font-size:14px;
+
+}
+
+.senha-box{
+
+ display:flex;
+ align-items:center;
+ gap:10px;
+
+}
+
+.input-password{
+
+ border:1px solid #ccc;
+ padding:5px 10px;
+ border-radius:5px;
+ width:120px;
+
+}
+
+.btn-ojo{
+
+ border:none;
+ background:#1565c0;
+ color:#fff;
+ padding:5px 10px;
+ border-radius:5px;
+ cursor:pointer;
+
+}
+
+.btn-ojo:hover{
+
+ opacity:.8;
+
+}
