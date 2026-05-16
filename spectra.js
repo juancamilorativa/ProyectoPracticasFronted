@@ -640,57 +640,70 @@ async function descargarInforme(i){
 doc.save("informe_"+i._id+".pdf");
 }
 
-
 function crearUsuario(){
-
- console.log({
-  correo:nuevoEmail.value,
-  password:nuevoPassword.value,
-  rol:nuevoRol.value
- });
 
  fetch(`${API_URL}/auth/register`,{
   method:"POST",
+
   headers:{
-   "Content-Type":"application/json"
+   "Content-Type":"application/json",
+   ...authHeader()
   },
+
   body:JSON.stringify({
-   correo:nuevoEmail.value,
-   password:nuevoPassword.value,
-   rol:nuevoRol.value
+
+   nombre: document.getElementById("nuevoNombre").value,
+
+   correo: nuevoEmail.value,
+
+   password: nuevoPassword.value,
+
+   rol: nuevoRol.value
+
   })
+
  })
- .then(async r=>{
 
-  const data = await r.json();
+ .then(r=>r.json())
 
-  console.log("RESPUESTA:", data);
+ .then(d=>{
 
-  if(!data.ok){
-   msg(data.error || data.mensaje,true);
-   return;
-  }
+  console.log(d);
+
+  if(!d.ok)
+   return msg(d.error,true);
 
   msg("Usuario creado");
 
-  nuevoEmail.value="";
-  nuevoPassword.value="";
+  document.getElementById("nuevoNombre").value = "";
+
+  nuevoEmail.value = "";
+
+  nuevoPassword.value = "";
+
+  nuevoRol.value = "tecnico";
 
   mostrarUsuarios();
 
  })
+
  .catch(err=>{
+
   console.log(err);
+
+  msg("Error servidor",true);
+
  });
 
 }
-
 function mostrarUsuarios(){
 
  fetch(`${API_URL}/auth/usuarios`,{
   headers:authHeader()
  })
+
  .then(r=>r.json())
+
  .then(d=>{
 
   listaUsuarios.innerHTML="";
@@ -699,7 +712,13 @@ function mostrarUsuarios(){
 
    listaUsuarios.innerHTML += `
    <div class="card">
-    ${u.correo} - ${u.rol}
+
+    ${u.nombre} <br>
+
+    ${u.correo} <br>
+
+    Rol: ${u.rol}
+
    </div>
    `;
 
