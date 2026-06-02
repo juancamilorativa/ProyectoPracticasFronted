@@ -440,7 +440,8 @@ function renderInformes(data){
 
  data.forEach(i=>{
 
-  const minutos = (new Date() - new Date(i.fecha)) / 60000;
+  const minutos =
+ (new Date() - new Date(i.fechaCreacion)) / 60000;
 
   let botones="";
 
@@ -459,7 +460,11 @@ function renderInformes(data){
   <div class="card">
    <b>${i.proyecto}</b><br>
    ${i.sitio}<br>
-   ${new Date(i.fecha).toLocaleString("es-CO")}<br>
+   <b>Fecha creación:</b>
+${new Date(i.fechaCreacion).toLocaleString("es-CO")}<br>
+
+<b>Fecha ejecución:</b>
+${new Date(i.fechaEjecucion).toLocaleString("es-CO")}<br>
    ${i.descripcion}<br>
 
    <b>Responsables:</b> ${i.responsables || "Sin asignar"}<br>
@@ -536,9 +541,9 @@ function filtrarInformesTecnico(){
 ========================= */
 function editarInforme(i){
  editId=i._id;
- if(i.fecha){
+ if(i.fechaEjecucion){
 
- editFecha.value = new Date(i.fecha)
+ editFecha.value = new Date(i.fechaEjecucion)
   .toISOString()
   .split("T")[0];
 
@@ -559,7 +564,7 @@ function guardarEdicion(){
    ...authHeader()
   },
   body:JSON.stringify({
-   fecha:editFecha.value,
+   fechaEjecucion:editFecha.value,
    descripcion:editDescripcion.value
   })
  })
@@ -617,8 +622,21 @@ async function descargarInforme(i){
 
  y = textoLargo(`Proyecto: ${i.proyecto}`, 20, y);
  y = textoLargo(`Sitio: ${i.sitio}`, 20, y);
- y = textoLargo(`Fecha: ${new Date(i.fecha).toLocaleString()}`, 20, y);
+y = textoLargo(
+ `Fecha creación: ${
+  new Date(i.fechaCreacion).toLocaleString("es-CO")
+ }`,
+ 20,
+ y
+);
 
+y = textoLargo(
+ `Fecha ejecución: ${
+  new Date(i.fechaEjecucion).toLocaleString("es-CO")
+ }`,
+ 20,
+ y
+);
  //  RESPONSABLES 
  y += 5;
  doc.setFont(undefined, "bold");
