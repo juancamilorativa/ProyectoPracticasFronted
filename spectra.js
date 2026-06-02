@@ -658,56 +658,100 @@ y = textoLargo(
  y += 7;
  y = textoLargo(i.descripcion || "", 20, y);
 
- //  IMÁGENES
- if(i.fotos){
+ /* =========================
+   IMÁGENES 4 POR HOJA
+========================= */
+
+if(i.fotos){
 
  const lista = Array.isArray(i.fotos)
  ? i.fotos
  : [];
 
-  for(let f of lista){
+ let posX = 15;
+ let posY = y;
 
-   try{
-    const url = `${API_URL}/uploads/${f}`;
+ let contador = 0;
 
-    const res = await fetch(url);
-    const blob = await res.blob();
+ const ancho = 85;
+ const alto = 60;
 
-    const base64 = await new Promise(resolve=>{
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.readAsDataURL(blob);
-    });
+ for(let f of lista){
 
-    const img = new Image();
-    img.src = base64;
+  try{
 
-    await new Promise(resolve => img.onload = resolve);
+   const url = `${API_URL}/uploads/${f}`;
 
-    let imgWidth = img.width;
-    let imgHeight = img.height;
+   const res = await fetch(url);
 
-    const maxWidth = 180;
-    const ratio = maxWidth / imgWidth;
+   const blob = await res.blob();
 
-    imgWidth = maxWidth;
-    imgHeight = imgHeight * ratio;
+   const base64 = await new Promise(resolve=>{
 
-    //  SALTO DE PÁGINA
-    if(y + imgHeight > 280){
-     doc.addPage();
-     y = 20;
-    }
+    const reader = new FileReader();
 
-    doc.addImage(base64, "JPEG", 15, y, imgWidth, imgHeight);
+    reader.onloadend = ()=>resolve(reader.result);
 
-    y += imgHeight + 10;
+    reader.readAsDataURL(blob);
 
-   }catch(e){
-    console.log("Error imagen:", e);
+   });
+
+   // POSICIÓN HORIZONTAL
+   if(contador % 2 === 0){
+
+    posX = 15;
+
+   }else{
+
+    posX = 110;
+
    }
+
+   // POSICIÓN VERTICAL
+   if(contador === 0 || contador === 1){
+
+    posY = y;
+
+   }
+
+   if(contador === 2 || contador === 3){
+
+    posY = y + 70;
+
+   }
+
+   // INSERTAR IMAGEN
+   doc.addImage(
+    base64,
+    "JPEG",
+    posX,
+    posY,
+    ancho,
+    alto
+   );
+
+   contador++;
+
+   // NUEVA PÁGINA CADA 4
+   if(contador === 4){
+
+    doc.addPage();
+
+    contador = 0;
+
+    y = 20;
+
+   }
+
+  }catch(e){
+
+   console.log("Error imagen:", e);
+
   }
+
  }
+
+}
 
 doc.save("informe_"+i._id+".pdf");
 }
