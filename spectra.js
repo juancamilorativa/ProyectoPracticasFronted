@@ -467,7 +467,7 @@ function renderInformes(data){
 ${new Date(i.fechaCreacion).toLocaleString("es-CO")}<br>
 
 <b>Fecha ejecución:</b>
-${new Date(i.fechaEjecucion).toLocaleString("es-CO")}<br>
+${new Date(i.fechaEjecucion).toLocaleDateString("es-CO")}<br>
    ${i.descripcion}<br>
 
    <b>Responsables:</b> ${i.responsables || "Sin asignar"}<br>
@@ -635,7 +635,7 @@ y = textoLargo(
 
 y = textoLargo(
  `Fecha ejecución: ${
-  new Date(i.fechaEjecucion).toLocaleString("es-CO")
+  new Date(i.fechaEjecucion).toLocaleDateString("es-CO")
  }`,
  20,
  y
