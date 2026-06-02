@@ -462,3 +462,6 @@ button:hover{
  opacity:.8;
 
 }
+.hidden{
+ display:none;
+}

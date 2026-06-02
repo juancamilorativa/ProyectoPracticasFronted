@@ -328,37 +328,88 @@ function cargarTecnicosSelect(){
 ========================= */
 function guardarInforme(){
 
- if(!proyecto.value || !descripcion.value)
-  return msg("Campos incompletos",true);
+ if(
+   !proyecto.value ||
+   !sitio.value ||
+   !descripcion.value ||
+   !fechaEjecucion.value ||
+   fotos.files.length === 0 ||
+   personas.selectedOptions.length === 0
+ ){
 
- let fd=new FormData();
+  return msg(
+   "Todos los campos son obligatorios y debes cargar mínimo una foto",
+   true
+  );
 
- let seleccionados=[...personas.selectedOptions].map(o=>o.value);
+ }
 
- fd.append("proyecto",proyecto.value);
- fd.append("sitio",sitio.value);
- fd.append("descripcion",descripcion.value);
- fd.append("personas",JSON.stringify(seleccionados));
+ let fd = new FormData();
 
- for(let f of fotos.files) fd.append("fotos",f);
+ let seleccionados = [...personas.selectedOptions]
+  .map(o=>o.value);
+
+ fd.append("proyecto", proyecto.value);
+
+ fd.append("sitio", sitio.value);
+
+ fd.append("descripcion", descripcion.value);
+
+ fd.append(
+  "fechaEjecucion",
+  fechaEjecucion.value
+ );
+
+ fd.append(
+  "personas",
+  JSON.stringify(seleccionados)
+ );
+
+ for(let f of fotos.files){
+
+  fd.append("fotos", f);
+
+ }
 
  fetch(`${API_URL}/informes`,{
+
   method:"POST",
+
   headers:authHeader(),
+
   body:fd
+
  })
+
  .then(r=>r.json())
+
  .then(d=>{
-  if(!d.ok) return msg(d.error,true);
+
+  if(!d.ok)
+   return msg(d.error,true);
 
   msg("Informe guardado");
 
-  descripcion.value="";
-  fotos.value="";
-  personas.selectedIndex=-1;
+  descripcion.value = "";
+
+  fotos.value = "";
+
+  personas.selectedIndex = -1;
+
+  fechaEjecucion.value = "";
 
   mostrarInformes();
+
+ })
+
+ .catch(error=>{
+
+  console.log(error);
+
+  msg("Error al guardar informe", true);
+
  });
+
 }
 
 /* =========================
@@ -782,6 +833,72 @@ function togglePassword(id, btn){
  }
 
 }
+function recuperarPassword(){
+
+const input =
+document.getElementById("correoRecuperar");
+
+if(!input){
+return alert("No existe el input correoRecuperar");
+}
+
+const correo = input.value;
+
+if(!correo){
+return alert("Ingresa un correo");
+}
+
+fetch(`${API_URL}/auth/forgot-password`,{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+correo: correo
+})
+
+})
+
+.then(async r=>{
+
+const data = await r.json();
+
+console.log(data);
+
+if(!data.ok){
+return alert(data.error);
+}
+
+alert(data.mensaje);
+
+})
+
+.catch(error=>{
+
+console.log(error);
+
+alert("Error de conexión");
+
+});
+
+}
+function mostrarRecuperar(){
+
+const box =
+document.getElementById("recuperarBox");
+
+if(!box){
+alert("No existe recuperarBox");
+return;
+}
+
+box.classList.toggle("hidden");
+
+}
+
 /* =========================
    LOGOUT
 ========================= */
