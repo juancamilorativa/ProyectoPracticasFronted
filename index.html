@@ -216,8 +216,13 @@ placeholder="Ingresa tu correo"
     <label>Sitio:</label>
     <input id="sitio" placeholder="Se completa automáticamente" readonly>
 
-    <label>Fecha:</label>
-    <input type="date" id="fecha">
+    <label>Fecha y hora de ejecución:</label>
+
+<input
+ type="datetime-local"
+ id="fechaEjecucion"
+ required
+>
 
     <label>Personal asignado:</label>
     <select id="personas" multiple></select>

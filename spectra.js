@@ -30,6 +30,9 @@ const descripcion = document.getElementById("descripcion");
 const fotos = document.getElementById("fotos");
 const personas = document.getElementById("personas");
 
+const fechaEjecucion =
+document.getElementById("fechaEjecucion");
+
 const listaInformesAdmin = document.getElementById("listaInformes");
 const listaInformesTecnico = document.getElementById("listaInformesTecnico");
 
